@@ -1,0 +1,83 @@
+/* 英雄区域 */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/首页1.0.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.hero p {
+    font-size: 1.6rem;
+    max-width: 1000px;
+    margin: 0 auto 3rem;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #8b0000;
+    color: white;
+    padding: 1.2rem 3rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.4rem;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #a52a2a;
+}
+
+/* 四大名著网格 */
+.classic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-top: 3rem;
+}
+
+.classic-card {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.classic-card:hover {
+    transform: translateY(-12px);
+}
+
+.classic-img {
+    height: 200px;
+    overflow: hidden;
+}
+
+.classic-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.classic-info {
+    padding: 2rem;
+}
+
+.classic-desc {
+    color: #666;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+}
+
