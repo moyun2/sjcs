@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>名著闯关游戏</title>
+    <style>
+        :root {
+            --primary-color: #ff7f50;
+            --secondary-color: #4CAF50;
+            --background: linear-gradient(135deg, #83a4d4 0%, #b6fbff 100%);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: '微软雅黑', sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .cloud {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            background: white;
+            border-radius: 20px;
+            animation: float 8s infinite;
+            opacity: 0.9;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+        }
+
+        .btn {
+            display: block;
+            width: 250px;
+            padding: 15px;
+            margin: 10px auto;
+            border: none;
+            border-radius: 25px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+        }
+
+        .question-box {
+            background: rgba(255,255,255,0.9);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .option {
+            padding: 15px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+        }
+
+        .score-board {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .celebrate {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .star {
+            position: absolute;
+            animation: explode 1s ease-out;
+            color: gold;
+        }
+
+        .hint-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .hint-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .hint-text {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .celebration-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .celebration-screen h2 {
+            font-size: 36px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .celebration-screen p {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .celebration-screen .btn {
+            width: 200px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 动态内容由JavaScript填充 -->
+    </div>
+    <div class="score-board">积分：<span id="score">0</span></div>
+    <div class="celebration-screen" id="celebrationScreen">
+        <h2>恭喜通关！</h2>
+        <p>你已获得<span id="bookTitle"></span>大师称号！</p>
+        <p>最终积分: <span id="finalScore">0</span></p>
+        <button class="btn" onclick="showMainMenu()">返回主菜单</button>
+    </div>
+    <div class="celebration-screen" id="giveUpScreen">
+        <h2>挑战失败</h2>
+        <p>当前积分: <span id="giveUpScore">0</span></p>
+        <button class="btn" onclick="showMainMenu()">返回主菜单</button>
+    </div>
+
+    <script>
+        // 游戏数据
+        const gameData = {
+            levels: ['初级', '中级', '高级'],
+            books: ['红楼梦', '水浒传', '西游记', '三国演义'],
+            questions: {
+                '初级': {
+                    '红楼梦': [
+                        {
+                            type: '判断',
+                            question: '贾宝玉和林黛玉是兄妹关系吗？',
+                            answer: false,
+                            explanation: '他们是没有血缘关系的表兄妹',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '“金陵十二钗”指的是什么？',
+                            options: ['十二位贵族女子', '十二种名贵首饰', '十二种名贵花卉', '十二首著名诗歌'],
+                            answer: '十二位贵族女子',
+                            explanation: '金陵十二钗是《红楼梦》中的十二位主要女性角色'
+                        },
+                        {
+                            type: '填空',
+                            question: '贾宝玉出生时嘴里含着一块________。',
+                            answer: '通灵宝玉',
+                            explanation: '贾宝玉出生时嘴里含着通灵宝玉，这是他的命根子'
+                        },
+                        {
+                            type: '判断',
+                            question: '林黛玉住在潇湘馆吗？',
+                            answer: true,
+                            explanation: '林黛玉住在潇湘馆，窗前有竹子',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '“心比天高，身为下贱”说的是谁？',
+                            options: ['晴雯', '袭人', '鸳鸯', '平儿'],
+                            answer: '晴雯',
+                            explanation: '晴雯是贾宝玉的丫鬟，性格刚烈'
+                        },
+                        {
+                            type: '填空',
+                            question: '大观园诗社的别称是________。',
+                            answer: '海棠社',
+                            explanation: '大观园诗社的别称是海棠社，第一次诗社咏白海棠'
+                        },
+                        {
+                            type: '判断',
+                            question: '贾宝玉给林黛玉起的表字是“颦颦”吗？',
+                            answer: true,
+                            explanation: '贾宝玉给林黛玉起的表字是“颦颦”',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '贾府元宵节猜灯谜暗示了什么？',
+                            options: ['家族衰败', '人物命运', '节日庆祝', '全部正确'],
+                            answer: '全部正确',
+                            explanation: '元春的谜语最明显，暗示了家族衰败和人物命运'
+                        },
+                        {
+                            type: '填空',
+                            question: '金陵十二钗中最后嫁给贾雨村的是________。',
+                            answer: '娇杏',
+                            explanation: '娇杏最后嫁给贾雨村，谐音“侥幸”'
+                        },
+                        {
+                            type: '判断',
+                            question: '贾宝玉梦游太虚幻境时看到的判词对应的是人物命运吗？',
+                            answer: true,
+                            explanation: '判词对应的是重要人物的结局',
+                            options: []
+                        }
+                    ],
+                    '水浒传': [
+                        {
+                            type: '判断',
+                            question: '武松在景阳冈打虎时喝了十八碗酒吗？',
+                            answer: true,
+                            explanation: '武松喝了十八碗酒后打虎',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '“及时雨”指的是谁？',
+                            options: ['宋江', '吴用', '晁盖', '卢俊义'],
+                            answer: '宋江',
+                            explanation: '宋江绰号及时雨，喜欢帮助别人'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉共有________人。',
+                            answer: '108',
+                            explanation: '梁山好汉共有108人，三十六天罡七十二地煞'
+                        },
+                        {
+                            type: '判断',
+                            question: '鲁智深倒拔的是槐树吗？',
+                            answer: false,
+                            explanation: '鲁智深倒拔的是柳树',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '“智取生辰纲”有多少好汉参与？',
+                            options: ['7人', '8人', '9人', '10人'],
+                            answer: '7人',
+                            explanation: '智取生辰纲有7位好汉参与，包括白日鼠白胜'
+                        },
+                        {
+                            type: '填空',
+                            question: '李逵的武器是________。',
+                            answer: '板斧',
+                            explanation: '李逵的武器是板斧，两把大斧子'
+                        },
+                        {
+                            type: '判断',
+                            question: '梁山第一位首领是晁盖吗？',
+                            answer: false,
+                            explanation: '梁山第一位首领是王伦，后来被林冲火并',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '好汉排名第六的是谁？',
+                            options: ['林冲', '武松', '鲁智深', '关胜'],
+                            answer: '关胜',
+                            explanation: '关胜绰号大刀，排名第六'
+                        },
+                        {
+                            type: '填空',
+                            question: '宋江的绰号是________。',
+                            answer: '及时雨',
+                            explanation: '宋江绰号及时雨，喜欢帮助别人'
+                        },
+                        {
+                            type: '判断',
+                            question: '林冲的绰号是“豹子头”吗？',
+                            answer: true,
+                            explanation: '林冲绰号豹子头，原是八十万禁军教头',
+                            options: []
+                        }
+                    ],
+                    '西游记': [
+                        {
+                            type: '判断',
+                            question: '孙悟空被如来佛祖压在五行山下吗？',
+                            answer: true,
+                            explanation: '孙悟空被如来佛祖压在五行山下，后来被唐僧救出',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '唐僧的坐骑白龙马原本是？',
+                            options: ['东海龙王', '西海龙王三太子', '天宫御马', '观音坐骑'],
+                            answer: '西海龙王三太子',
+                            explanation: '白龙马原本是西海龙王三太子，因犯天条被惩罚'
+                        },
+                        {
+                            type: '填空',
+                            question: '孙悟空的金箍棒重________斤。',
+                            answer: '一万三千',
+                            explanation: '孙悟空的金箍棒重一万三千斤，是东海定海神珍铁'
+                        },
+                        {
+                            type: '判断',
+                            question: '火焰山的形成与孙悟空有关吗？',
+                            answer: true,
+                            explanation: '火焰山的形成与孙悟空大闹天宫时踢倒炼丹炉有关',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '唐僧在何处收服猪八戒？',
+                            options: ['高老庄', '流沙河', '鹰愁涧', '五行山'],
+                            answer: '高老庄',
+                            explanation: '猪八戒在高老庄变身女婿，被唐僧收服'
+                        },
+                        {
+                            type: '填空',
+                            question: '取经团队最后取得________卷经书。',
+                            answer: '五千零四十八',
+                            explanation: '取经团队最后取得五千零四十八卷经书'
+                        },
+                        {
+                            type: '判断',
+                            question: '唐僧取经用了14年吗？',
+                            answer: true,
+                            explanation: '唐僧取经用了14年，原著明确记载',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '紧箍咒是谁给唐僧的？',
+                            options: ['观音菩萨', '如来佛祖', '太白金星', '玉皇大帝'],
+                            answer: '观音菩萨',
+                            explanation: '紧箍咒是观音菩萨给唐僧的，还有两个箍没用'
+                        },
+                        {
+                            type: '填空',
+                            question: '真假美猴王出现在________。',
+                            answer: '朱紫国',
+                            explanation: '真假美猴王出现在朱紫国，与国王治病有关'
+                        },
+                        {
+                            type: '判断',
+                            question: '唐僧前世是金蝉子吗？',
+                            answer: true,
+                            explanation: '唐僧前世是金蝉子，如来二弟子',
+                            options: []
+                        }
+                    ],
+                    '三国演义': [
+                        {
+                            type: '判断',
+                            question: '桃园三结义包括刘备、关羽和张飞吗？',
+                            answer: true,
+                            explanation: '桃园三结义包括刘备、关羽和张飞',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '诸葛亮发明的运输工具是？',
+                            options: ['木牛流马', '孔明灯', '连弩', '指南车'],
+                            answer: '木牛流马',
+                            explanation: '诸葛亮发明的木牛流马用于运送粮草'
+                        },
+                        {
+                            type: '填空',
+                            question: '关羽的武器是________。',
+                            answer: '青龙偃月刀',
+                            explanation: '关羽的武器是青龙偃月刀，重八十二斤'
+                        },
+                        {
+                            type: '判断',
+                            question: '曹操的曹植擅长诗文吗？',
+                            answer: true,
+                            explanation: '曹植七步成诗，非常擅长诗文',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '诸葛亮最后病逝于？',
+                            options: ['五丈原', '白帝城', '祁山', '街亭'],
+                            answer: '五丈原',
+                            explanation: '诸葛亮最后病逝于五丈原，出师未捷身先死'
+                        },
+                        {
+                            type: '填空',
+                            question: '三国最后被________统一。',
+                            answer: '司马炎',
+                            explanation: '三国最后被司马炎统一，建立西晋'
+                        },
+                        {
+                            type: '判断',
+                            question: '赵云救阿斗发生在长坂坡吗？',
+                            answer: true,
+                            explanation: '赵云在长坂坡救阿斗，七进七出',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '“既生瑜何生亮”说的是谁？',
+                            options: ['周瑜', '庞统', '鲁肃', '陆逊'],
+                            answer: '周瑜',
+                            explanation: '“既生瑜何生亮”是周瑜感叹诸葛亮的才华'
+                        },
+                        {
+                            type: '填空',
+                            question: '火烧连营是________战役。',
+                            answer: '夷陵之战',
+                            explanation: '火烧连营是夷陵之战，刘备为关羽报仇'
+                        },
+                        {
+                            type: '判断',
+                            question: '“三英战吕布”包括刘备、关羽和张飞吗？',
+                            answer: true,
+                            explanation: '“三英战吕布”包括刘备、关羽和张飞',
+                            options: []
+                        }
+                    ]
+                },
+                '中级': {
+                    '红楼梦': [
+                        {
+                            type: '单选',
+                            question: '林黛玉的诗号是什么？',
+                            options: ['潇湘妃子', '蘅芜君', '稻香老农', '枕霞旧友'],
+                            answer: '潇湘妃子',
+                            explanation: '林黛玉的诗号是潇湘妃子，与她住的地方有关'
+                        },
+                        {
+                            type: '填空',
+                            question: '贾宝玉的通灵宝玉上刻着“莫失莫忘，________”。',
+                            answer: '仙寿恒昌',
+                            explanation: '贾宝玉的通灵宝玉上刻着“莫失莫忘，仙寿恒昌”'
+                        },
+                        {
+                            type: '判断',
+                            question: '林黛玉第一次进贾府时，贾母让她读《太上感应篇》吗？',
+                            answer: true,
+                            explanation: '林黛玉第一次进贾府时，贾母让她读《太上感应篇》',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '贾宝玉的通灵宝玉丢失后，在哪里找到的？',
+                            options: ['怡红院', '潇湘馆', '蘅芜苑', '栊翠庵'],
+                            answer: '栊翠庵',
+                            explanation: '贾宝玉的通灵宝玉在栊翠庵找到，妙玉的庵堂'
+                        },
+                        {
+                            type: '填空',
+                            question: '贾府的四位小姐中，最后出家为尼的是________。',
+                            answer: '惜春',
+                            explanation: '惜春最后看破红尘，出家为尼'
+                        },
+                        {
+                            type: '判断',
+                            question: '林黛玉的《葬花吟》表达了她的哀愁吗？',
+                            answer: true,
+                            explanation: '林黛玉的《葬花吟》表达了她的哀愁',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '贾宝玉的金箍棒能大能小，最小能变成什么？',
+                            options: ['绣花针', '牙签', '芝麻', '针'],
+                            answer: '针',
+                            explanation: '贾宝玉的金箍棒最小能变成针'
+                        },
+                        {
+                            type: '填空',
+                            question: '猪八戒的天蓬元帅身份时的兵器是________。',
+                            answer: '九齿钉耙',
+                            explanation: '猪八戒的兵器是九齿钉耙'
+                        },
+                        {
+                            type: '判断',
+                            question: '沙僧在天庭的官职是卷帘大将吗？',
+                            answer: true,
+                            explanation: '沙僧在天庭的官职是卷帘大将',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '白骨精先后变成哪三种人？',
+                            options: ['老翁、老妇、村姑', '村姑、老妇、老翁', '老妇、村姑、老翁', '村姑、老翁、老妇'],
+                            answer: '村姑、老妇、老翁',
+                            explanation: '白骨精先后变成村姑、老妇、老翁'
+                        }
+                    ],
+                    '水浒传': [
+                        {
+                            type: '单选',
+                            question: '林冲的绰号是什么？',
+                            options: ['豹子头', '小李广', '行者', '花和尚'],
+                            answer: '豹子头',
+                            explanation: '林冲绰号豹子头，原是八十万禁军教头'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉中，谁被称为“智多星”？',
+                            answer: '吴用',
+                            explanation: '吴用绰号智多星，是梁山军师'
+                        },
+                        {
+                            type: '判断',
+                            question: '宋江在浔阳楼题了反诗吗？',
+                            answer: true,
+                            explanation: '宋江在浔阳楼题了反诗，被判死刑',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '武松杀死了谁的嫂子？',
+                            options: ['自己的', '宋江的', '林冲的', '鲁智深的'],
+                            answer: '自己的',
+                            explanation: '武松为兄报仇，杀死了自己的嫂子'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉中，谁被称为“玉麒麟”？',
+                            answer: '卢俊义',
+                            explanation: '卢俊义绰号玉麒麟'
+                        },
+                        {
+                            type: '判断',
+                            question: '李逵的武器是板斧吗？',
+                            answer: true,
+                            explanation: '李逵的武器是板斧，两把大斧子',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '梁山第一位首领是？',
+                            options: ['王伦', '晁盖', '宋江', '卢俊义'],
+                            answer: '王伦',
+                            explanation: '梁山第一位首领是王伦，后来被林冲火并'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉中，谁是打虎将？',
+                            answer: '李忠',
+                            explanation: '李忠绰号打虎将'
+                        },
+                        {
+                            type: '判断',
+                            question: '梁山好汉中，谁是神行太保？',
+                            answer: '戴宗',
+                            explanation: '戴宗能日行八百里，绰号神行太保',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '梁山好汉中，谁是小李广？',
+                            options: ['花荣', '燕青', '王英', '张清'],
+                            answer: '花荣',
+                            explanation: '花荣箭术高超，绰号小李广'
+                        }
+                    ],
+                    '西游记': [
+                        {
+                            type: '单选',
+                            question: '孙悟空的第一个师傅是？',
+                            options: ['唐僧', '观音菩萨', '菩提祖师', '如来佛祖'],
+                            answer: '菩提祖师',
+                            explanation: '孙悟空的第一个师傅是菩提祖师，教他七十二变和筋斗云'
+                        },
+                        {
+                            type: '填空',
+                            question: '红孩儿是牛魔王和________的儿子。',
+                            answer: '铁扇公主',
+                            explanation: '红孩儿是牛魔王和铁扇公主的儿子'
+                        },
+                        {
+                            type: '判断',
+                            question: '唐僧在女儿国想成亲吗？',
+                            answer: false,
+                            explanation: '唐僧一心向佛，不想成亲',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '孙悟空被太上老君炼了多少天？',
+                            options: ['七七四十九天', '三三九九天', '八十一日', '一百天'],
+                            answer: '七七四十九天',
+                            explanation: '孙悟空被太上老君炼了七七四十九天'
+                        },
+                        {
+                            type: '填空',
+                            question: '关羽的“温酒斩华雄”发生在________战役。',
+                            answer: '虎牢关之战',
+                            explanation: '关羽的“温酒斩华雄”发生在虎牢关之战'
+                        },
+                        {
+                            type: '判断',
+                            question: '诸葛亮的“草船借箭”发生在赤壁之战之前吗？',
+                            answer: true,
+                            explanation: '诸葛亮的“草船借箭”发生在赤壁之战之前',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '曹操的“宁教我负天下人，休教天下人负我”出自哪个事件？',
+                            options: ['杀吕伯奢', '刺董卓', '宛城之战', '官渡之战'],
+                            answer: '杀吕伯奢',
+                            explanation: '曹操误杀吕伯奢一家后说出此话'
+                        },
+                        {
+                            type: '填空',
+                            question: '关羽的“过五关斩六将”是为了投奔________。',
+                            answer: '刘备',
+                            explanation: '关羽挂印封金，投奔刘备'
+                        },
+                        {
+                            type: '判断',
+                            question: '诸葛亮的“空城计”中，城中实际几乎没有兵力吗？',
+                            answer: true,
+                            explanation: '诸葛亮的“空城计”中，城中实际几乎没有兵力',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '刘备的“白帝城托孤”是在哪个地方？',
+                            options: ['白帝城', '成都', '荆州', '徐州'],
+                            answer: '白帝城',
+                            explanation: '刘备在白帝城托孤，临终前托付诸葛亮'
+                        }
+                    ],
+                    '三国演义': [
+                        {
+                            type: '单选',
+                            question: '曹操的“何以解忧？唯有杜康”出自哪首诗？',
+                            options: ['短歌行', '观沧海', '龟虽寿', '步出夏门行'],
+                            answer: '短歌行',
+                            explanation: '曹操的“何以解忧？唯有杜康”出自《短歌行》'
+                        },
+                        {
+                            type: '填空',
+                            question: '诸葛亮的“鞠躬尽瘁，死而后已”出自________。',
+                            answer: '出师表',
+                            explanation: '诸葛亮的“鞠躬尽瘁，死而后已”出自《出师表》'
+                        },
+                        {
+                            type: '判断',
+                            question: '关羽的“温酒斩华雄”发生在虎牢关之战吗？',
+                            answer: true,
+                            explanation: '关羽的“温酒斩华雄”发生在虎牢关之战',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '刘备的“桃园三结义”发生在哪个州？',
+                            options: ['幽州', '徐州', '荆州', '益州'],
+                            answer: '幽州',
+                            explanation: '刘备、关羽、张飞在幽州涿郡桃园结义'
+                        },
+                        {
+                            type: '填空',
+                            question: '诸葛亮的“草船借箭”发生在________战役之前。',
+                            answer: '赤壁之战',
+                            explanation: '诸葛亮的“草船借箭”发生在赤壁之战之前'
+                        },
+                        {
+                            type: '判断',
+                            question: '曹操的“望梅止渴”故事发生在征张绣时吗？',
+                            answer: true,
+                            explanation: '曹操的“望梅止渴”故事发生在征张绣时',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '关羽的“单刀赴会”是为了与谁相见？',
+                            options: ['鲁肃', '周瑜', '吕蒙', '孙权'],
+                            answer: '鲁肃',
+                            explanation: '关羽赴东吴鲁肃之约'
+                        },
+                        {
+                            type: '填空',
+                            question: '诸葛亮的“七擒七纵”是对付________。',
+                            answer: '孟获',
+                            explanation: '诸葛亮七擒七纵孟获，平定南蛮之乱'
+                        },
+                        {
+                            type: '判断',
+                            question: '刘备的“马跃檀溪”是为了逃脱蔡瑁的追捕吗？',
+                            answer: true,
+                            explanation: '刘备在新野被蔡瑁追捕，马跃檀溪逃脱',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '曹操的“煮酒论英雄”是与谁对饮？',
+                            options: ['刘备', '孙权', '袁绍', '吕布'],
+                            answer: '刘备',
+                            explanation: '曹操与刘备煮酒论英雄'
+                        }
+                    ]
+                },
+                '高级': {
+                    '红楼梦': [
+                        {
+                            type: '单选',
+                            question: '林黛玉的前身是什么？',
+                            options: ['绛珠草', '神瑛侍者', '西方灵河', '太虚幻境'],
+                            answer: '绛珠草',
+                            explanation: '林黛玉的前身是绛珠草，与贾宝玉的前身神瑛侍者有关'
+                        },
+                        {
+                            type: '填空',
+                            question: '贾母的娘家姓氏是________。',
+                            answer: '史',
+                            explanation: '贾母的娘家姓氏是史，史家是四大家族之一'
+                        },
+                        {
+                            type: '判断',
+                            question: '贾宝玉的丫鬟袭人最后嫁给了蒋玉菡吗？',
+                            answer: true,
+                            explanation: '袭人最后嫁给了蒋玉菡',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '林黛玉的《葬花吟》中，“侬今葬花人笑痴”下一句是？',
+                            options: ['他年葬侬知是谁', '一朝春尽红颜老', '花谢花飞花满天', '试看春残花渐落'],
+                            answer: '他年葬侬知是谁',
+                            explanation: '林黛玉的《葬花吟》中，“侬今葬花人笑痴”下一句是“他年葬侬知是谁”'
+                        },
+                        {
+                            type: '填空',
+                            question: '贾宝玉的通灵宝玉上刻的文字是“莫失莫忘，________”。',
+                            answer: '仙寿恒昌',
+                            explanation: '贾宝玉的通灵宝玉上刻的文字是“莫失莫忘，仙寿恒昌”'
+                        },
+                        {
+                            type: '判断',
+                            question: '林黛玉的《葬花吟》表达了她的哀愁吗？',
+                            answer: true,
+                            explanation: '林黛玉的《葬花吟》表达了她的哀愁',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '贾宝玉的金箍棒能大能小，最小能变成什么？',
+                            options: ['绣花针', '牙签', '芝麻', '针'],
+                            answer: '针',
+                            explanation: '贾宝玉的金箍棒最小能变成针'
+                        },
+                        {
+                            type: '填空',
+                            question: '猪八戒的天蓬元帅身份时的兵器是________。',
+                            answer: '九齿钉耙',
+                            explanation: '猪八戒的兵器是九齿钉耙'
+                        },
+                        {
+                            type: '判断',
+                            question: '沙僧在天庭的官职是卷帘大将吗？',
+                            answer: true,
+                            explanation: '沙僧在天庭的官职是卷帘大将',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '白骨精先后变成哪三种人？',
+                            options: ['老翁、老妇、村姑', '村姑、老妇、老翁', '老妇、村姑、老翁', '村姑、老翁、老妇'],
+                            answer: '村姑、老妇、老翁',
+                            explanation: '白骨精先后变成村姑、老妇、老翁'
+                        }
+                    ],
+                    '水浒传': [
+                        {
+                            type: '单选',
+                            question: '林冲的绰号是什么？',
+                            options: ['豹子头', '小李广', '行者', '花和尚'],
+                            answer: '豹子头',
+                            explanation: '林冲绰号豹子头，原是八十万禁军教头'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉中，谁被称为“智多星”？',
+                            answer: '吴用',
+                            explanation: '吴用绰号智多星，是梁山军师'
+                        },
+                        {
+                            type: '判断',
+                            question: '宋江在浔阳楼题了反诗吗？',
+                            answer: true,
+                            explanation: '宋江在浔阳楼题了反诗，被判死刑',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '武松杀死了谁的嫂子？',
+                            options: ['自己的', '宋江的', '林冲的', '鲁智深的'],
+                            answer: '自己的',
+                            explanation: '武松为兄报仇，杀死了自己的嫂子'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉中，谁被称为“玉麒麟”？',
+                            answer: '卢俊义',
+                            explanation: '卢俊义绰号玉麒麟'
+                        },
+                        {
+                            type: '判断',
+                            question: '李逵的武器是板斧吗？',
+                            answer: true,
+                            explanation: '李逵的武器是板斧，两把大斧子',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '梁山第一位首领是？',
+                            options: ['王伦', '晁盖', '宋江', '卢俊义'],
+                            answer: '王伦',
+                            explanation: '梁山第一位首领是王伦，后来被林冲火并'
+                        },
+                        {
+                            type: '填空',
+                            question: '梁山好汉中，谁是打虎将？',
+                            answer: '李忠',
+                            explanation: '李忠绰号打虎将'
+                        },
+                        {
+                            type: '判断',
+                            question: '梁山好汉中，谁是神行太保？',
+                            answer: '戴宗',
+                            explanation: '戴宗能日行八百里，绰号神行太保',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '梁山好汉中，谁是小李广？',
+                            options: ['花荣', '燕青', '王英', '张清'],
+                            answer: '花荣',
+                            explanation: '花荣箭术高超，绰号小李广'
+                        }
+                    ],
+                    '西游记': [
+                        {
+                            type: '单选',
+                            question: '孙悟空的第一个师傅是？',
+                            options: ['唐僧', '观音菩萨', '菩提祖师', '如来佛祖'],
+                            answer: '菩提祖师',
+                            explanation: '孙悟空的第一个师傅是菩提祖师，教他七十二变和筋斗云'
+                        },
+                        {
+                            type: '填空',
+                            question: '红孩儿是牛魔王和________的儿子。',
+                            answer: '铁扇公主',
+                            explanation: '红孩儿是牛魔王和铁扇公主的儿子'
+                        },
+                        {
+                            type: '判断',
+                            question: '唐僧在女儿国想成亲吗？',
+                            answer: false,
+                            explanation: '唐僧一心向佛，不想成亲',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '孙悟空被太上老君炼了多少天？',
+                            options: ['七七四十九天', '三三九九天', '八十一日', '一百天'],
+                            answer: '七七四十九天',
+                            explanation: '孙悟空被太上老君炼了七七四十九天'
+                        },
+                        {
+                            type: '填空',
+                            question: '关羽的“温酒斩华雄”发生在________战役。',
+                            answer: '虎牢关之战',
+                            explanation: '关羽的“温酒斩华雄”发生在虎牢关之战'
+                        },
+                        {
+                            type: '判断',
+                            question: '诸葛亮的“草船借箭”发生在赤壁之战之前吗？',
+                            answer: true,
+                            explanation: '诸葛亮的“草船借箭”发生在赤壁之战之前',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '曹操的“宁教我负天下人，休教天下人负我”出自哪个事件？',
+                            options: ['杀吕伯奢', '刺董卓', '宛城之战', '官渡之战'],
+                            answer: '杀吕伯奢',
+                            explanation: '曹操误杀吕伯奢一家后说出此话'
+                        },
+                        {
+                            type: '填空',
+                            question: '关羽的“过五关斩六将”是为了投奔________。',
+                            answer: '刘备',
+                            explanation: '关羽挂印封金，投奔刘备'
+                        },
+                        {
+                            type: '判断',
+                            question: '诸葛亮的“空城计”中，城中实际几乎没有兵力吗？',
+                            answer: true,
+                            explanation: '诸葛亮的“空城计”中，城中实际几乎没有兵力',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '刘备的“白帝城托孤”是在哪个地方？',
+                            options: ['白帝城', '成都', '荆州', '徐州'],
+                            answer: '白帝城',
+                            explanation: '刘备在白帝城托孤，临终前托付诸葛亮'
+                        }
+                    ],
+                    '三国演义': [
+                        {
+                            type: '单选',
+                            question: '曹操的“何以解忧？唯有杜康”出自哪首诗？',
+                            options: ['短歌行', '观沧海', '龟虽寿', '步出夏门行'],
+                            answer: '短歌行',
+                            explanation: '曹操的“何以解忧？唯有杜康”出自《短歌行》'
+                        },
+                        {
+                            type: '填空',
+                            question: '诸葛亮的“鞠躬尽瘁，死而后已”出自________。',
+                            answer: '出师表',
+                            explanation: '诸葛亮的“鞠躬尽瘁，死而后已”出自《出师表》'
+                        },
+                        {
+                            type: '判断',
+                            question: '关羽的“温酒斩华雄”发生在虎牢关之战吗？',
+                            answer: true,
+                            explanation: '关羽的“温酒斩华雄”发生在虎牢关之战',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '刘备的“桃园三结义”发生在哪个州？',
+                            options: ['幽州', '徐州', '荆州', '益州'],
+                            answer: '幽州',
+                            explanation: '刘备、关羽、张飞在幽州涿郡桃园结义'
+                        },
+                        {
+                            type: '填空',
+                            question: '诸葛亮的“草船借箭”发生在________战役之前。',
+                            answer: '赤壁之战',
+                            explanation: '诸葛亮的“草船借箭”发生在赤壁之战之前'
+                        },
+                        {
+                            type: '判断',
+                            question: '曹操的“望梅止渴”故事发生在征张绣时吗？',
+                            answer: true,
+                            explanation: '曹操的“望梅止渴”故事发生在征张绣时',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '关羽的“单刀赴会”是为了与谁相见？',
+                            options: ['鲁肃', '周瑜', '吕蒙', '孙权'],
+                            answer: '鲁肃',
+                            explanation: '关羽赴东吴鲁肃之约'
+                        },
+                        {
+                            type: '填空',
+                            question: '诸葛亮的“七擒七纵”是对付________。',
+                            answer: '孟获',
+                            explanation: '诸葛亮七擒七纵孟获，平定南蛮之乱'
+                        },
+                        {
+                            type: '判断',
+                            question: '刘备的“马跃檀溪”是为了逃脱蔡瑁的追捕吗？',
+                            answer: true,
+                            explanation: '刘备在新野被蔡瑁追捕，马跃檀溪逃脱',
+                            options: []
+                        },
+                        {
+                            type: '单选',
+                            question: '曹操的“煮酒论英雄”是与谁对饮？',
+                            options: ['刘备', '孙权', '袁绍', '吕布'],
+                            answer: '刘备',
+                            explanation: '曹操与刘备煮酒论英雄'
+                        }
+                    ]
+                }
+            }
+        };
+
+        let currentState = {
+            level: '',
+            book: '',
+            currentQuestion: 0,
+            score: 0,
+            hintsUsed: 0,
+            wrongAttempts: 0
+        };
+
+        // 界面管理
+        function showMainMenu() {
+            const html = `
+                <h1 style="text-align:center;color:var(--primary-color);">名著闯关游戏</h1>
+                ${createClouds(3)}
+                ${gameData.levels.map(level => `
+                    <button class="btn level-btn" data-level="${level}">${level}</button>
+                `).join('')}
+            `;
+            updateContainer(html);
+        }
+
+        function createClouds(count) {
+            return Array(count).fill().map((_, i) => `
+                <div class="cloud" style="
+                    top: ${20 + i * 30}%;
+                    left: ${i * 20}%;
+                    animation-duration: ${8 + i * 2}s;
+                "></div>
+            `).join('');
+        }
+
+        function showBookSelection(level) {
+            currentState.level = level;
+            const html = `
+                <h2 style="text-align:center;">选择名著</h2>
+                ${gameData.books.map(book => `
+                    <button class="btn book-btn" data-book="${book}">${book}</button>
+                `).join('')}
+                <button class="btn" onclick="showMainMenu()">返回</button>
+            `;
+            updateContainer(html);
+        }
+
+        function showQuestion() {
+            const question = getCurrentQuestion();
+            const html = `
+                <div class="question-box">
+                    <h3>第 ${currentState.currentQuestion + 1} 关</h3>
+                    <p>${question.question}</p>
+                    ${renderOptions(question)}
+                    <div class="hint-text" id="hintText">${question.explanation}</div>
+                    <button class="btn hint-btn" onclick="useHint()" ${currentState.hintsUsed >= 3 ? 'disabled' : ''}>
+                        提示 (剩余${3 - currentState.hintsUsed}次)
+                    </button>
+                    <button class="btn" onclick="giveUp()">放弃本题</button>
+                </div>
+            `;
+            updateContainer(html);
+        }
+
+        function renderOptions(question) {
+            if (question.type === '填空') {
+                return `
+                    <input type="text" id="fillAnswer" style="padding: 10px; margin: 10px 0; width: 80%; max-width: 400px;">
+                    <button class="btn" onclick="checkFillAnswer()">提交答案</button>
+                `;
+            } else if (question.type === '判断') {
+                return `
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(true)">✅ 对</div>
+                        <div class="option" onclick="checkAnswer(false)">❌ 错</div>
+                    </div>
+                `;
+            } else if (question.type === '单选') {
+                const shuffledOptions = shuffleArray([...question.options]);
+                return `
+                    <div class="options">
+                        ${shuffledOptions.map(opt => `
+                            <div class="option" onclick="checkAnswer('${opt}')">${opt}</div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        // 游戏逻辑
+        function checkAnswer(answer) {
+            const question = getCurrentQuestion();
+            if (question.type === '判断') {
+                if (answer === question.answer) {
+                    handleCorrectAnswer();
+                } else {
+                    handleWrongAnswer();
+                }
+            } else if (question.type === '单选') {
+                if (answer === question.answer) {
+                    handleCorrectAnswer();
+                } else {
+                    handleWrongAnswer();
+                }
+            }
+        }
+
+        function checkFillAnswer() {
+            const question = getCurrentQuestion();
+            const userAnswer = document.getElementById('fillAnswer').value.trim();
+            if (userAnswer === question.answer) {
+                handleCorrectAnswer();
+            } else {
+                handleWrongAnswer();
+            }
+        }
+
+        function handleCorrectAnswer() {
+            currentState.score += 10;
+            document.getElementById('hintText').style.display = 'block';
+            showCelebration();
+            setTimeout(() => {
+                currentState.currentQuestion++;
+                if (currentState.currentQuestion >= 10) {
+                    showLevelComplete();
+                } else {
+                    showQuestion();
+                }
+            }, 1000);
+            updateScore();
+        }
+
+        function handleWrongAnswer() {
+            currentState.score = Math.max(0, currentState.score - 5);
+            currentState.wrongAttempts++;
+            alert('答错了！再试一次。正确答案是：' + getCurrentQuestion().answer);
+            updateScore();
+            if (currentState.wrongAttempts >= 3) {
+                currentState.wrongAttempts = 0;
+                currentState.currentQuestion++;
+                if (currentState.currentQuestion >= 10) {
+                    showLevelComplete();
+                } else {
+                    showQuestion();
+                }
+            }
+        }
+
+        function showCelebration() {
+            const stars = Array(10).fill().map((_, i) => 
+                `<div class="star" style="
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation-delay: ${i * 0.1}s;
+                ">★</div>`
+            ).join('');
+            document.body.insertAdjacentHTML('beforeend', `<div class="celebrate">${stars}</div>`);
+            setTimeout(() => {
+                const celebrateElement = document.querySelector('.celebrate');
+                if (celebrateElement) {
+                    celebrateElement.remove();
+                }
+            }, 1000);
+        }
+
+        function showLevelComplete() {
+            document.getElementById('bookTitle').textContent = currentState.book;
+            document.getElementById('finalScore').textContent = currentState.score;
+            document.getElementById('celebrationScreen').style.display = 'flex';
+        }
+
+        function giveUp() {
+            currentState.score = Math.max(0, currentState.score - 10);
+            updateScore();
+            document.getElementById('giveUpScore').textContent = currentState.score;
+            document.getElementById('giveUpScreen').style.display = 'flex';
+        }
+
+        function useHint() {
+            if (currentState.hintsUsed < 3) {
+                document.getElementById('hintText').style.display = 'block';
+                currentState.hintsUsed++;
+                showQuestion();
+            } else {
+                alert('提示次数已用完！');
+            }
+        }
+
+        // 工具函数
+        function updateContainer(html) {
+            document.querySelector('.container').innerHTML = html;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = currentState.score;
+        }
+
+        function getCurrentQuestion() {
+            return gameData.questions[currentState.level][currentState.book][currentState.currentQuestion];
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // 事件监听
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('level-btn')) {
+                showBookSelection(e.target.dataset.level);
+            }
+            if (e.target.classList.contains('book-btn')) {
+                currentState.book = e.target.dataset.book;
+                currentState.currentQuestion = 0;
+                currentState.hintsUsed = 0;
+                currentState.wrongAttempts = 0;
+                showQuestion();
+            }
+        });
+
+        function showMainMenu() {
+            document.getElementById('celebrationScreen').style.display = 'none';
+            document.getElementById('giveUpScreen').style.display = 'none';
+            currentState.level = '';
+            currentState.book = '';
+            currentState.currentQuestion = 0;
+            currentState.score = 0;
+            currentState.hintsUsed = 0;
+            currentState.wrongAttempts = 0;
+            updateScore();
+            updateContainer(`
+                <h1 style="text-align:center;color:var(--primary-color);">名著闯关游戏</h1>
+                ${createClouds(3)}
+                ${gameData.levels.map(level => `
+                    <button class="btn level-btn" data-level="${level}">${level}</button>
+                `).join('')}
+            `);
+        }
+
+        // 初始化
+        showMainMenu();
+        updateScore();
+    </script>
+</body>
+</html>

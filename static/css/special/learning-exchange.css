@@ -1,0 +1,152 @@
+/* 主体样式 */
+body {
+    background-color: #f9f3e9;
+    color: #333;
+    line-height: 1.6;
+    font-family: 'Microsoft YaHei', sans-serif;
+}
+
+.section {
+    padding: 4rem 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    color: #8b0000;
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 4px;
+    background-color: #8b0000;
+}
+
+.discussion-board {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.discussion-board h2 {
+    color: #8b0000;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.discussion-board p {
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+}
+
+.discussion-topics {
+    margin-top: 2rem;
+}
+
+.topic {
+    border-bottom: 1px solid #eee;
+    padding: 1.5rem 0;
+}
+
+.topic:last-child {
+    border-bottom: none;
+}
+
+.topic h3 {
+    color: #333;
+    margin-bottom: 0.8rem;
+}
+
+.topic p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.topic-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.comment-form {
+    margin-top: 3rem;
+    background-color: #f8f1e1;
+    padding: 2rem;
+    border-radius: 8px;
+}
+
+.comment-form h3 {
+    color: #8b0000;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: #8b0000;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #a52a2a;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    nav ul {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    nav ul li {
+        margin: 0.5rem;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特别专栏 - 中国名著慕课平台</title>
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/special.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=STXingkai&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 主导航栏 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="../static/img/logo.png" alt="logo">
+                智驭光影·重塑经典
+            </div>
+            <button class="menu-toggle" aria-label="菜单">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav>
+                <ul>
+                    <li class="nav-item"><a href="../index.html">首页</a></li>
+                    <li class="nav-item"><a href="../templates/class.html">课程</a></li>
+                    <li class="nav-item"><a href="../templates/culture.html">文化</a></li>
+                    <li class="nav-item"><a href="../templates/activity.html">活动</a></li>
+                    <li class="nav-item"><a href="speclal.html">特别专栏</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <section class="section">
+        <div class="container">
+            <h1 class="section-title">特别专栏</h1>
+            <div class="content-wrapper">
+                <div class="sidebar">
+                    <h3>专栏内容</h3>
+                    <ul class="sidebar-nav">
+                        <li><a href="special/cultural-output.html">文化输出</a></li>
+                        <li><a href="special/learning-exchange.html">学习交流</a></li>
+                        <li><a href="special/qa-game.html">问答游戏</a></li>
+                    </ul>
+                </div>
+                <div class="content">
+                    <div class="content-section">
+                        <h2>欢迎来到特别专栏</h2>
+                        <p>特别专栏是我们平台的特色内容区域，旨在通过多样化的形式和互动方式，帮助您更深入地了解中国传统文化和古典文学。</p>
+                        <p>您可以选择以下内容进行探索：</p>
+                        <ul>
+                            <li><strong>文化输出</strong>：通过视频和文章，了解中国文化的国际传播。</li>
+                            <li><strong>学习交流</strong>：参与讨论区和互动活动，与其他学习者交流心得。</li>
+                            <li><strong>问答游戏</strong>：通过趣味问答，测试和提升您的知识水平。</li>
+                        </ul>
+                        <p>点击左侧导航链接，开始您的探索之旅！</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="#">合作机构</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">帮助中心</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>联系我们</h4>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt"></i> 重庆市沙坪坝区壮志路33号</p>
+                        <p><i class="fas fa-phone"></i> 023-65385538</p>
+                    </address>
+                </div>
+                <div class="footer-social">
+                    <h4>社交媒体</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-bilibili"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-douyin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-subscribe">
+                    <h4>订阅通知</h4>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="输入您的邮箱" class="subscribe-input">
+                        <button type="submit" class="subscribe-button">订阅</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 四境穿梭. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 导航栏的JavaScript -->
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

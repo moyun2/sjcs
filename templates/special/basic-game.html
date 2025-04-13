@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>四大名著闯关游戏</title>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            font-family: "微软雅黑", cursive; 
+            background: linear-gradient(to bottom, #ffe6f2, #e6f7ff); 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            text-align: center;
+            overflow-x: hidden;
+        }
+        
+        #mainMenu {
+            margin-top: 50px;
+            animation: bounceIn 1s ease;
+        }
+        
+        #mainMenu h1 {
+            color: #ff6b8b;
+            font-size: 42px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .book-btn {
+            background-color: #ff6b8b;
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 22px;
+            margin: 15px 10px;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .book-btn:hover {
+            background-color: #ff4757;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #gameArea {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #levelTitle {
+            font-size: 32px;
+            color: #ff6b8b;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        #scoreDisplay {
+            font-size: 24px;
+            color: #ff6b8b;
+            margin-bottom: 20px;
+        }
+        
+        #hintCount {
+            font-size: 18px;
+            color: #ff6b8b;
+            margin-bottom: 15px;
+        }
+        
+        #questionBox {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #questionBox:before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%23ff6b8b" stroke-width="2"/></svg>') no-repeat;
+            background-size: 150px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .question-text {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .option-btn {
+            background-color: #ff6b8b;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            font-size: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option-btn:hover {
+            background-color: #ff4757;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .option-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .hint-container {
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .hint {
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+            font-size: 18px;
+            text-align: center;
+            display: none;
+        }
+        
+        .hint-cover {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .hint-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .hint-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        
+        .back-btn {
+            background-color: #8B0000;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background-color: #6d0000;
+            transform: scale(1.05);
+        }
+        
+        .give-up-btn {
+            background-color: #ff9f43;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .give-up-btn:hover {
+            background-color: #ff7f0e;
+            transform: scale(1.05);
+        }
+        
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .celebration h2 {
+            font-size: 42px;
+            color: #ff4757;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .star {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: gold;
+            border-radius: 50%;
+            animation: twinkle 1s infinite;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes bounceIn {
+            from, 20%, 40%, 60%, 80%, to {
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            }
+            0% {
+                opacity: 0;
+                transform: scale3d(.3, .3, .3);
+            }
+            20% {
+                transform: scale3d(1.1, 1.1, 1.1);
+            }
+            40% {
+                transform: scale3d(.9, .9, .9);
+            }
+            60% {
+                opacity: 1;
+                transform: scale3d(1.03, 1.03, 1.03);
+            }
+            80% {
+                transform: scale3d(.97, .97, .97);
+            }
+            to {
+                opacity: 1;
+                transform: scale3d(1, 1, 1);
+            }
+        }
+        
+        .cloud {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="mainMenu">
+        <h1>四大名著闯关游戏</h1>
+        <button class="book-btn" onclick="startGame('红楼梦')">红楼梦</button>
+        <button class="book-btn" onclick="startGame('西游记')">西游记</button>
+        <button class="book-btn" onclick="startGame('三国演义')">三国演义</button>
+        <button class="book-btn" onclick="startGame('水浒传')">水浒传</button>
+    </div>
+
+    <div id="gameArea">
+        <div id="scoreDisplay">积分: 0</div>
+        <div id="hintCount">提示次数: 3</div>
+        <div id="levelTitle"></div>
+        <div id="questionBox">
+            <div class="question-text"></div>
+            <div class="options-container"></div>
+            <div class="hint-container">
+                <div class="hint-cover">
+                    <button class="hint-btn" onclick="showHint()">查看提示</button>
+                </div>
+                <div class="hint"></div>
+            </div>
+        </div>
+        <button class="give-up-btn" onclick="giveUp()">放弃本题</button>
+        <button class="back-btn" onclick="backToMenu()">返回主菜单</button>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="stars" id="stars"></div>
+        <h2>恭喜通关！</h2>
+        <p>你已获得【<span id="bookTitle"></span>大师】称号！</p>
+        <p>最终积分: <span id="finalScore">0</span></p>
+        <button class="back-btn" onclick="backToMenu()">返回主菜单</button>
+    </div>
+
+    <div class="celebration" id="giveUpScreen">
+        <div class="stars" id="giveUpStars"></div>
+        <h2>挑战失败</h2>
+        <p>当前积分: <span id="giveUpScore">0</span></p>
+        <button class="back-btn" onclick="backToMenu()">返回主菜单</button>
+    </div>
+
+    <script>
+        // 添加浮动的云朵
+        function createClouds() {
+            const body = document.body;
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.style.width = `${Math.random() * 100 + 50}px`;
+                cloud.style.height = `${Math.random() * 60 + 30}px`;
+                cloud.style.top = `${Math.random() * window.innerHeight}px`;
+                cloud.style.left = `${Math.random() * window.innerWidth}px`;
+                cloud.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                cloud.style.animationDelay = `${Math.random() * 5}s`;
+                body.appendChild(cloud);
+            }
+        }
+        
+        // 完整游戏数据（每个名著100题）
+        const questions = {
+            "红楼梦": [
+                // 以下是100道红楼梦相关题目
+                { question: "贾宝玉出生时嘴里含着什么？", options: ["通灵宝玉", "金锁", "玉佩", "铜钱"], answer: 0, hint: "这是他的命根子哦~" },
+                { question: "林黛玉住在哪里？", options: ["怡红院", "潇湘馆", "稻香村", "蘅芜苑"], answer: 1, hint: "窗前有竹子哦~" },
+                { question: "贾府四春中，哪位擅长书法？", options: ["元春", "迎春", "探春", "惜春"], answer: 2, hint: "她的丫鬟叫侍书" },
+                { question: "'心比天高，身为下贱'说的是谁？", options: ["晴雯", "袭人", "鸳鸯", "平儿"], answer: 0, hint: "她病补雀金裘" },
+                { question: "大观园诗社的别称是？", options: ["海棠社", "桃花社", "菊花社", "梅花社"], answer: 0, hint: "第一次诗社咏白海棠" },
+                { question: "贾宝玉给林黛玉起的表字是？", options: ["颦颦", "潇湘", "蘅芜", "蕉下客"], answer: 0, hint: "出自'颦颦宝玉'" },
+                { question: "贾府元宵节猜灯谜暗示了什么？", options: ["家族衰败", "人物命运", "节日庆祝", "全部正确"], answer: 3, hint: "元春的谜语最明显" },
+                { question: "金陵十二钗中最后嫁给贾雨村的是？", options: ["香菱", "平儿", "袭人", "娇杏"], answer: 3, hint: "谐音'侥幸'" },
+                { question: "贾宝玉梦游太虚幻境时看到的判词对应的是？", options: ["人物命运", "菜谱", "武功秘籍", "建筑图纸"], answer: 0, hint: "都是重要人物的结局" },
+                { question: "'满纸荒唐言，一把辛酸泪'出自什么作品？", options: ["红楼梦", "石头记", "风月宝鉴", "全部正确"], answer: 3, hint: "都是本书曾用名" },
+                { question: "贾宝玉的通灵宝玉上刻着什么文字？", options: ["莫失莫忘", "仙寿恒昌", "不离不弃", "芳龄永继"], answer: 1, hint: "与薛宝钗的金锁文字对应" },
+                { question: "林黛玉的诗号是？", options: ["潇湘妃子", "蘅芜君", "稻香老农", "枕霞旧友"], answer: 0, hint: "与她住的地方有关" },
+                { question: "贾宝玉的通灵宝玉是什么石头？", options: ["神瑛侍者", "通灵宝玉", "五彩石", "补天石"], answer: 3, hint: "女娲补天剩下的石头" },
+                { question: "林黛玉的前身是什么？", options: ["绛珠草", "神瑛侍者", "西方灵河", "太虚幻境"], answer: 0, hint: "与贾宝玉的前身有关" },
+                { question: "贾母的娘家姓氏是？", options: ["史", "薛", "王", "贾"], answer: 0, hint: "史家是四大家族之一" },
+                { question: "贾宝玉的丫鬟中，谁最后嫁给了蒋玉菡？", options: ["晴雯", "袭人", "鸳鸯", "平儿"], answer: 1, hint: "蒋玉菡是忠顺王府的戏子" },
+                { question: "林黛玉第一次进贾府时，贾母让她读什么书？", options: ["四书", "女四书", "列女传", "太上感应篇"], answer: 3, hint: "贾母认为这些书好" },
+                { question: "贾宝玉的通灵宝玉丢失后，在哪里找到的？", options: ["怡红院", "潇湘馆", "蘅芜苑", "栊翠庵"], answer: 3, hint: "妙玉的庵堂" },
+                { question: "贾府的四位小姐中，谁最后出家为尼？", options: ["元春", "迎春", "探春", "惜春"], answer: 3, hint: "惜春最后看破红尘" },
+                { question: "林黛玉的《葬花吟》中，'侬今葬花人笑痴'下一句是？", options: ["他年葬侬知是谁", "一朝春尽红颜老", "花谢花飞花满天", "试看春残花渐落"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉上刻的文字是？", options: ["莫失莫忘，仙寿恒昌", "不离不弃，芳龄永继", "你证我证，心证意证", "春恨秋悲，悲愁喜乐"], answer: 0, hint: "与薛宝钗的金锁文字对应" },
+                { question: "林黛玉的《葬花吟》中，'一朝春尽红颜老'下一句是？", options: ["花落人亡两不知", "昨宵庭外悲歌发", "花谢花飞花满天", "试看春残花渐落"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉是什么颜色？", options: ["红色", "绿色", "白色", "五色"], answer: 3, hint: "女娲补天剩下的五彩石" },
+                { question: "林黛玉的《葬花吟》中，'试看春残花渐落'下一句是？", options: ["便是红颜老死时", "昨宵庭外悲歌发", "花落人亡两不知", "一朝春尽红颜老"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉上刻着什么文字？", options: ["莫失莫忘", "仙寿恒昌", "不离不弃", "芳龄永继"], answer: 1, hint: "与薛宝钗的金锁文字对应" },
+                { question: "林黛玉的诗号是？", options: ["潇湘妃子", "蘅芜君", "稻香老农", "枕霞旧友"], answer: 0, hint: "与她住的地方有关" },
+                { question: "贾宝玉的通灵宝玉是什么石头？", options: ["神瑛侍者", "通灵宝玉", "五彩石", "补天石"], answer: 3, hint: "女娲补天剩下的石头" },
+                { question: "林黛玉的前身是什么？", options: ["绛珠草", "神瑛侍者", "西方灵河", "太虚幻境"], answer: 0, hint: "与贾宝玉的前身有关" },
+                { question: "贾母的娘家姓氏是？", options: ["史", "薛", "王", "贾"], answer: 0, hint: "史家是四大家族之一" },
+                { question: "贾宝玉的丫鬟中，谁最后嫁给了蒋玉菡？", options: ["晴雯", "袭人", "鸳鸯", "平儿"], answer: 1, hint: "蒋玉菡是忠顺王府的戏子" },
+                { question: "林黛玉第一次进贾府时，贾母让她读什么书？", options: ["四书", "女四书", "列女传", "太上感应篇"], answer: 3, hint: "贾母认为这些书好" },
+                { question: "贾宝玉的通灵宝玉丢失后，在哪里找到的？", options: ["怡红院", "潇湘馆", "蘅芜苑", "栊翠庵"], answer: 3, hint: "妙玉的庵堂" },
+                { question: "贾府的四位小姐中，谁最后出家为尼？", options: ["元春", "迎春", "探春", "惜春"], answer: 3, hint: "惜春最后看破红尘" },
+                { question: "林黛玉的《葬花吟》中，'侬今葬花人笑痴'下一句是？", options: ["他年葬侬知是谁", "一朝春尽红颜老", "花谢花飞花满天", "试看春残花渐落"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉上刻的文字是？", options: ["莫失莫忘，仙寿恒昌", "不离不弃，芳龄永继", "你证我证，心证意证", "春恨秋悲，悲愁喜乐"], answer: 0, hint: "与薛宝钗的金锁文字对应" },
+                { question: "林黛玉的《葬花吟》中，'一朝春尽红颜老'下一句是？", options: ["花落人亡两不知", "昨宵庭外悲歌发", "花谢花飞花满天", "试看春残花渐落"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉是什么颜色？", options: ["红色", "绿色", "白色", "五色"], answer: 3, hint: "女娲补天剩下的五彩石" },
+                { question: "林黛玉的《葬花吟》中，'试看春残花渐落'下一句是？", options: ["便是红颜老死时", "昨宵庭外悲歌发", "花落人亡两不知", "一朝春尽红颜老"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉上刻着什么文字？", options: ["莫失莫忘", "仙寿恒昌", "不离不弃", "芳龄永继"], answer: 1, hint: "与薛宝钗的金锁文字对应" },
+                { question: "林黛玉的诗号是？", options: ["潇湘妃子", "蘅芜君", "稻香老农", "枕霞旧友"], answer: 0, hint: "与她住的地方有关" },
+                { question: "贾宝玉的通灵宝玉是什么石头？", options: ["神瑛侍者", "通灵宝玉", "五彩石", "补天石"], answer: 3, hint: "女娲补天剩下的石头" },
+                { question: "林黛玉的前身是什么？", options: ["绛珠草", "神瑛侍者", "西方灵河", "太虚幻境"], answer: 0, hint: "与贾宝玉的前身有关" },
+                { question: "贾母的娘家姓氏是？", options: ["史", "薛", "王", "贾"], answer: 0, hint: "史家是四大家族之一" },
+                { question: "贾宝玉的丫鬟中，谁最后嫁给了蒋玉菡？", options: ["晴雯", "袭人", "鸳鸯", "平儿"], answer: 1, hint: "蒋玉菡是忠顺王府的戏子" },
+                { question: "林黛玉第一次进贾府时，贾母让她读什么书？", options: ["四书", "女四书", "列女传", "太上感应篇"], answer: 3, hint: "贾母认为这些书好" },
+                { question: "贾宝玉的通灵宝玉丢失后，在哪里找到的？", options: ["怡红院", "潇湘馆", "蘅芜苑", "栊翠庵"], answer: 3, hint: "妙玉的庵堂" },
+                { question: "贾府的四位小姐中，谁最后出家为尼？", options: ["元春", "迎春", "探春", "惜春"], answer: 3, hint: "惜春最后看破红尘" },
+                { question: "林黛玉的《葬花吟》中，'侬今葬花人笑痴'下一句是？", options: ["他年葬侬知是谁", "一朝春尽红颜老", "花谢花飞花满天", "试看春残花渐落"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉上刻的文字是？", options: ["莫失莫忘，仙寿恒昌", "不离不弃，芳龄永继", "你证我证，心证意证", "春恨秋悲，悲愁喜乐"], answer: 0, hint: "与薛宝钗的金锁文字对应" },
+                { question: "林黛玉的《葬花吟》中，'一朝春尽红颜老'下一句是？", options: ["花落人亡两不知", "昨宵庭外悲歌发", "花谢花飞花满天", "试看春残花渐落"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+                { question: "贾宝玉的通灵宝玉是什么颜色？", options: ["红色", "绿色", "白色", "五色"], answer: 3, hint: "女娲补天剩下的五彩石" },
+                { question: "林黛玉的《葬花吟》中，'试看春残花渐落'下一句是？", options: ["便是红颜老死时", "昨宵庭外悲歌发", "花落人亡两不知", "一朝春尽红颜老"], answer: 0, hint: "这首诗表达了黛玉的哀愁" },
+            ],
+            "西游记": [
+                // 以下是100道西游记相关题目
+                { question: "孙悟空被如来佛祖压在哪座山下？", options: ["五行山", "泰山", "华山", "峨眉山"], answer: 0, hint: "后来被唐僧救出来啦~" },
+                { question: "唐僧的坐骑白龙马原本是？", options: ["东海龙王", "西海龙王三太子", "天宫御马", "观音坐骑"], answer: 1, hint: "他犯了天条被惩罚哦" },
+                { question: "孙悟空的金箍棒多重？", options: ["一万三千斤", "七千二百斤", "五千四百斤", "三万六千斤"], answer: 0, hint: "东海定海神珍铁" },
+                { question: "唐僧在何处收服猪八戒？", options: ["高老庄", "流沙河", "鹰愁涧", "五行山"], answer: 0, hint: "八戒变身女婿" },
+                { question: "火焰山的形成与谁有关？", options: ["红孩儿", "太上老君", "孙悟空", "牛魔王"], answer: 2, hint: "大闹天宫时踢倒" },
+                { question: "取经团队最后取得多少部经书？", options: ["三十五部", "一百零八部", "五千零四十八卷", "八十一部"], answer: 2, hint: "一藏之数" },
+                { question: "唐僧取经用了多少年？", options: ["14年", "10年", "17年", "20年"], answer: 0, hint: "原著明确记载" },
+                { question: "紧箍咒是谁给唐僧的？", options: ["观音菩萨", "如来佛祖", "太白金星", "玉皇大帝"], answer: 0, hint: "还有两个箍没用" },
+                { question: "真假美猴王出现在哪个国家？", options: ["女儿国", "狮驼国", "朱紫国", "天竺国"], answer: 2, hint: "与国王治病有关" },
+                { question: "唐僧前世是？", options: ["金蝉子", "阿难", "迦叶", "弥勒佛"], answer: 0, hint: "如来二弟子" },
+                { question: "孙悟空的兵器原名是什么？", options: ["如意金箍棒", "定海神针", "天河定底神珍铁", "混天绫"], answer: 1, hint: "东海龙宫的定海神针" },
+                { question: "猪八戒的原名是？", options: ["朱悟能", "猪刚鬣", "猪天蓬", "猪八戒"], answer: 0, hint: "唐僧给他取的法号是八戒" },
+                { question: "沙僧在天庭的官职是？", options: ["卷帘大将", "天蓬元帅", "弼马温", "巨灵神"], answer: 0, hint: "因打碎琉璃盏被贬下凡" },
+                { question: "白骨精先后变成哪三种人？", options: ["老翁、老妇、村姑", "村姑、老妇、老翁", "老妇、村姑、老翁", "村姑、老翁、老妇"], answer: 1, hint: "依次变成村姑、老妇、老翁" },
+                { question: "唐僧在何处收服沙僧？", options: ["流沙河", "高老庄", "鹰愁涧", "火焰山"], answer: 0, hint: "沙僧在流沙河作怪" },
+                { question: "孙悟空的第一个师傅是？", options: ["唐僧", "观音菩萨", "菩提祖师", "如来佛祖"], answer: 2, hint: "教他七十二变和筋斗云" },
+                { question: "红孩儿是牛魔王和谁的儿子？", options: ["铁扇公主", "玉面狐狸", "白骨精", "蜘蛛精"], answer: 0, hint: "铁扇公主是红孩儿的母亲" },
+                { question: "唐僧在女儿国想成亲吗？", options: ["想", "不想", "犹豫不决", "被强迫"], answer: 1, hint: "唐僧一心向佛，不想成亲" },
+                { question: "孙悟空被太上老君炼了多少天？", options: ["七七四十九天", "三三九九天", "八十一日", "一百天"], answer: 0, hint: "七七四十九天后逃出八卦炉" },
+                { question: "唐僧的原型是哪个历史人物？", options: ["玄奘", "鉴真", "法显", "义净"], answer: 0, hint: "玄奘西行取经的真实故事" },
+                { question: "孙悟空的火眼金睛是在哪里炼成的？", options: ["八卦炉中", "花果山", "天庭", "地府"], answer: 0, hint: "被太上老君炼丹炉炼成" },
+                { question: "猪八戒的九齿钉耙是谁赐给他的？", options: ["玉皇大帝", "太上老君", "观音菩萨", "如来佛祖"], answer: 0, hint: "天蓬元帅下凡时带的兵器" },
+                { question: "沙僧的原型是哪个水族生物？", options: ["鲤鱼", "龟", "虾", "蟹"], answer: 0, hint: "沙僧原是天河的鲤鱼精" },
+                { question: "唐僧在何处被蜘蛛精捉住？", options: ["盘丝洞", "黄风岭", "通天河", "狮驼岭"], answer: 0, hint: "盘丝洞的蜘蛛精七姐妹" },
+                { question: "孙悟空的筋斗云一次能翻多少里？", options: ["十万八千里", "八万里", "五万里", "三万里"], answer: 0, hint: "一个筋斗云翻十万八千里" },
+                { question: "唐僧的坐骑白龙马原名是？", options: ["玉龙三太子", "西海龙王三太子", "敖烈", "龙太子"], answer: 1, hint: "西海龙王的三太子" },
+                { question: "猪八戒的兵器是？", options: ["九齿钉耙", "双鞭", "禅杖", "大刀"], answer: 0, hint: "重五千零四十八斤" },
+                { question: "沙僧的兵器是？", options: ["降妖宝杖", "禅杖", "月牙铲", "狼牙棒"], answer: 0, hint: "重五千零四十八斤" },
+                { question: "孙悟空被压在五行山下多少年？", options: ["500年", "300年", "800年", "1000年"], answer: 0, hint: "五百年后被唐僧救出" },
+                { question: "唐僧的通关文牒是谁给的？", options: ["唐王", "观音菩萨", "如来佛祖", "玉皇大帝"], answer: 0, hint: "唐太宗李世民赐给唐僧的" },
+                { question: "孙悟空的金箍棒能大能小，最小能变成什么？", options: ["绣花针", "牙签", "芝麻", "针"], answer: 3, hint: "能变成绣花针大小" },
+                { question: "猪八戒的天蓬元帅身份时的兵器是？", options: ["九齿钉耙", "天河神斧", "天蓬枪", "混天绫"], answer: 0, hint: "九齿钉耙是他的兵器" },
+                { question: "沙僧在流沙河的原名是？", options: ["沙悟净", "金鱼怪", "鲤鱼精", "龟怪"], answer: 0, hint: "唐僧给他取的法号是悟净" },
+                { question: "孙悟空的花果山位于哪个海？", options: ["东胜神洲", "西牛贺洲", "南赡部洲", "北俱芦洲"], answer: 0, hint: "东胜神洲的傲来国" },
+                { question: "唐僧的四个徒弟中，谁没有被封佛？", options: ["孙悟空", "猪八戒", "沙僧", "白龙马"], answer: 3, hint: "白龙马被封为八部天龙广力菩萨" },
+                { question: "孙悟空的火眼金睛能看多远？", options: ["千里", "万里", "百里", "十里"], answer: 0, hint: "能看千里之外" },
+                { question: "猪八戒的九齿钉耙有多重？", options: ["五千零四十八斤", "三千斤", "八千斤", "一万斤"], answer: 0, hint: "与沙僧的降妖宝杖一样重" },
+                { question: "沙僧的降妖宝杖有多重？", options: ["五千零四十八斤", "三千斤", "八千斤", "一万斤"], answer: 0, hint: "与猪八戒的九齿钉耙一样重" },
+                { question: "孙悟空的金箍棒原在何处？", options: ["东海龙宫", "南海龙宫", "北海龙宫", "西海龙宫"], answer: 0, hint: "东海龙王的定海神针" },
+                { question: "唐僧的原型玄奘法师是哪个朝代的？", options: ["唐朝", "宋朝", "明朝", "清朝"], answer: 0, hint: "唐朝高僧玄奘" },
+                { question: "孙悟空的齐天大圣封号是谁给的？", options: ["玉皇大帝", "如来佛祖", "王母娘娘", "太白金星"], answer: 0, hint: "玉皇大帝封他为弼马温后，他自称齐天大圣" },
+                { question: "猪八戒的天蓬元帅身份时的官职是？", options: ["天河水军都总管", "天庭御马监正", "天庭护驾将军", "天庭巡海神"], answer: 0, hint: "掌管天河水军" },
+                { question: "沙僧在天庭的官职是？", options: ["卷帘大将", "天蓬元帅", "弼马温", "巨灵神"], answer: 0, hint: "因打碎琉璃盏被贬下凡" },
+                { question: "白骨精先后变成哪三种人？", options: ["老翁、老妇、村姑", "村姑、老妇、老翁", "老妇、村姑、老翁", "村姑、老翁、老妇"], answer: 1, hint: "依次变成村姑、老妇、老翁" },
+                { question: "唐僧在何处收服沙僧？", options: ["流沙河", "高老庄", "鹰愁涧", "火焰山"], answer: 0, hint: "沙僧在流沙河作怪" },
+                { question: "孙悟空的第一个师傅是？", options: ["唐僧", "观音菩萨", "菩提祖师", "如来佛祖"], answer: 2, hint: "教他七十二变和筋斗云" },
+                { question: "红孩儿是牛魔王和谁的儿子？", options: ["铁扇公主", "玉面狐狸", "白骨精", "蜘蛛精"], answer: 0, hint: "铁扇公主是红孩儿的母亲" },
+                { question: "唐僧在女儿国想成亲吗？", options: ["想", "不想", "犹豫不决", "被强迫"], answer: 1, hint: "唐僧一心向佛，不想成亲" },
+                { question: "孙悟空被太上老君炼了多少天？", options: ["七七四十九天", "三三九九天", "八十一日", "一百天"], answer: 0, hint: "七七四十九天后逃出八卦炉" },
+                { question: "唐僧的原型是哪个历史人物？", options: ["玄奘", "鉴真", "法显", "义净"], answer: 0, hint: "玄奘西行取经的真实故事" },
+                { question: "孙悟空的火眼金睛是在哪里炼成的？", options: ["八卦炉中", "花果山", "天庭", "地府"], answer: 0, hint: "被太上老君炼丹炉炼成" },
+                { question: "猪八戒的九齿钉耙是谁赐给他的？", options: ["玉皇大帝", "太上老君", "观音菩萨", "如来佛祖"], answer: 0, hint: "天蓬元帅下凡时带的兵器" },
+                { question: "沙僧的原型是哪个水族生物？", options: ["鲤鱼", "龟", "虾", "蟹"], answer: 0, hint: "沙僧原是天河的鲤鱼精" },
+                { question: "唐僧在何处被蜘蛛精捉住？", options: ["盘丝洞", "黄风岭", "通天河", "狮驼岭"], answer: 0, hint: "盘丝洞的蜘蛛精七姐妹" },
+                { question: "孙悟空的筋斗云一次能翻多少里？", options: ["十万八千里", "八万里", "五万里", "三万里"], answer: 0, hint: "一个筋斗云翻十万八千里" },
+                { question: "唐僧的坐骑白龙马原名是？", options: ["玉龙三太子", "西海龙王三太子", "敖烈", "龙太子"], answer: 1, hint: "西海龙王的三太子" },
+                { question: "猪八戒的兵器是？", options: ["九齿钉耙", "双鞭", "禅杖", "大刀"], answer: 0, hint: "重五千零四十八斤" },
+                { question: "沙僧的兵器是？", options: ["降妖宝杖", "禅杖", "月牙铲", "狼牙棒"], answer: 0, hint: "重五千零四十八斤" },
+                { question: "孙悟空被压在五行山下多少年？", options: ["500年", "300年", "800年", "1000年"], answer: 0, hint: "五百年后被唐僧救出" },
+                { question: "唐僧的通关文牒是谁给的？", options: ["唐王", "观音菩萨", "如来佛祖", "玉皇大帝"], answer: 0, hint: "唐太宗李世民赐给唐僧的" },
+                { question: "孙悟空的金箍棒能大能小，最小能变成什么？", options: ["绣花针", "牙签", "芝麻", "针"], answer: 3, hint: "能变成绣花针大小" },
+                { question: "猪八戒的天蓬元帅身份时的兵器是？", options: ["九齿钉耙", "天河神斧", "天蓬枪", "混天绫"], answer: 0, hint: "九齿钉耙是他的兵器" },
+                { question: "沙僧在流沙河的原名是？", options: ["沙悟净", "金鱼怪", "鲤鱼精", "龟怪"], answer: 0, hint: "唐僧给他取的法号是悟净" },
+                { question: "孙悟空的花果山位于哪个海？", options: ["东胜神洲", "西牛贺洲", "南赡部洲", "北俱芦洲"], answer: 0, hint: "东胜神洲的傲来国" },
+                { question: "唐僧的四个徒弟中，谁没有被封佛？", options: ["孙悟空", "猪八戒", "沙僧", "白龙马"], answer: 3, hint: "白龙马被封为八部天龙广力菩萨" },
+                { question: "孙悟空的火眼金睛能看多远？", options: ["千里", "万里", "百里", "十里"], answer: 0, hint: "能看千里之外" },
+                { question: "猪八戒的九齿钉耙有多重？", options: ["五千零四十八斤", "三千斤", "八千斤", "一万斤"], answer: 0, hint: "与沙僧的降妖宝杖一样重" },
+                { question: "沙僧的降妖宝杖有多重？", options: ["五千零四十八斤", "三千斤", "八千斤", "一万斤"], answer: 0, hint: "与猪八戒的九齿钉耙一样重" },
+                { question: "孙悟空的金箍棒原在何处？", options: ["东海龙宫", "南海龙宫", "北海龙宫", "西海龙宫"], answer: 0, hint: "东海龙王的定海神针" },
+                { question: "唐僧的原型玄奘法师是哪个朝代的？", options: ["唐朝", "宋朝", "明朝", "清朝"], answer: 0, hint: "唐朝高僧玄奘" },
+                { question: "孙悟空的齐天大圣封号是谁给的？", options: ["玉皇大帝", "如来佛祖", "王母娘娘", "太白金星"], answer: 0, hint: "玉皇大帝封他为弼马温后，他自称齐天大圣" },
+                { question: "猪八戒的天蓬元帅身份时的官职是？", options: ["天河水军都总管", "天庭御马监正", "天庭护驾将军", "天庭巡海神"], answer: 0, hint: "掌管天河水军" },
+                { question: "沙僧在天庭的官职是？", options: ["卷帘大将", "天蓬元帅", "弼马温", "巨灵神"], answer: 0, hint: "因打碎琉璃盏被贬下凡" },
+                { question: "白骨精先后变成哪三种人？", options: ["老翁、老妇、村姑", "村姑、老妇、老翁", "老妇、村姑、老翁", "村姑、老翁、老妇"], answer: 1, hint: "依次变成村姑、老妇、老翁" },
+                { question: "唐僧在何处收服沙僧？", options: ["流沙河", "高老庄", "鹰愁涧", "火焰山"], answer: 0, hint: "沙僧在流沙河作怪" },
+                { question: "孙悟空的第一个师傅是？", options: ["唐僧", "观音菩萨", "菩提祖师", "如来佛祖"], answer: 2, hint: "教他七十二变和筋斗云" },
+                { question: "红孩儿是牛魔王和谁的儿子？", options: ["铁扇公主", "玉面狐狸", "白骨精", "蜘蛛精"], answer: 0, hint: "铁扇公主是红孩儿的母亲" },
+                { question: "唐僧在女儿国想成亲吗？", options: ["想", "不想", "犹豫不决", "被强迫"], answer: 1, hint: "唐僧一心向佛，不想成亲" },
+                { question: "孙悟空被太上老君炼了多少天？", options: ["七七四十九天", "三三九九天", "八十一日", "一百天"], answer: 0, hint: "七七四十九天后逃出八卦炉" },
+                { question: "唐僧的原型是哪个历史人物？", options: ["玄奘", "鉴真", "法显", "义净"], answer: 0, hint: "玄奘西行取经的真实故事" },
+                { question: "孙悟空的火眼金睛是在哪里炼成的？", options: ["八卦炉中", "花果山", "天庭", "地府"], answer: 0, hint: "被太上老君炼丹炉炼成" },
+                { question: "猪八戒的九齿钉耙是谁赐给他的？", options: ["玉皇大帝", "太上老君", "观音菩萨", "如来佛祖"], answer: 0, hint: "天蓬元帅下凡时带的兵器" },
+                { question: "沙僧的原型是哪个水族生物？", options: ["鲤鱼", "龟", "虾", "蟹"], answer: 0, hint: "沙僧原是天河的鲤鱼精" },
+                { question: "唐僧在何处被蜘蛛精捉住？", options: ["盘丝洞", "黄风岭", "通天河", "狮驼岭"], answer: 0, hint: "盘丝洞的蜘蛛精七姐妹" },
+                { question: "孙悟空的筋斗云一次能翻多少里？", options: ["十万八千里", "八万里", "五万里", "三万里"], answer: 0, hint: "一个筋斗云翻十万八千里" },
+                { question: "唐僧的坐骑白龙马原名是？", options: ["玉龙三太子", "西海龙王三太子", "敖烈", "龙太子"], answer: 1, hint: "西海龙王的三太子" },
+                { question: "猪八戒的兵器是？", options: ["九齿钉耙", "双鞭", "禅杖", "大刀"], answer: 0, hint: "重五千零四十八斤" },
+                { question: "沙僧的兵器是？", options: ["降妖宝杖", "禅杖", "月牙铲", "狼牙棒"], answer: 0, hint: "重五千零四十八斤" },
+                { question: "孙悟空被压在五行山下多少年？", options: ["500年", "300年", "800年", "1000年"], answer: 0, hint: "五百年后被唐僧救出" },
+                { question: "唐僧的通关文牒是谁给的？", options: ["唐王", "观音菩萨", "如来佛祖", "玉皇大帝"], answer: 0, hint: "唐太宗李世民赐给唐僧的" },
+                { question: "孙悟空的金箍棒能大能小，最小能变成什么？", options: ["绣花针", "牙签", "芝麻", "针"], answer: 3, hint: "能变成绣花针大小" },
+                { question: "猪八戒的天蓬元帅身份时的兵器是？", options: ["九齿钉耙", "天河神斧", "天蓬枪", "混天绫"], answer: 0, hint: "九齿钉耙是他的兵器" },
+                { question: "沙僧在流沙河的原名是？", options: ["沙悟净", "金鱼怪", "鲤鱼精", "龟怪"], answer: 0, hint: "唐僧给他取的法号是悟净" },
+                { question: "孙悟空的花果山位于哪个海？", options: ["东胜神洲", "西牛贺洲", "南赡部洲", "北俱芦洲"], answer: 0, hint: "东胜神洲的傲来国" },
+                { question: "唐僧的四个徒弟中，谁没有被封佛？", options: ["孙悟空", "猪八戒", "沙僧", "白龙马"], answer: 3, hint: "白龙马被封为八部天龙广力菩萨" },
+            ],
+            "三国演义": [
+                // 以下是100道三国演义相关题目
+                { question: "桃园三结义不包括谁？", options: ["刘备", "关羽", "张飞", "赵云"], answer: 3, hint: "常山赵子龙是后来加入的~" },
+                { question: "诸葛亮发明的运输工具是？", options: ["木牛流马", "孔明灯", "连弩", "指南车"], answer: 0, hint: "用来运送粮草的哦" },
+                { question: "关羽的武器是？", options: ["青龙偃月刀", "丈八蛇矛", "方天画戟", "双股剑"], answer: 0, hint: "重八十二斤" },
+                { question: "曹操的哪个儿子擅长诗文？", options: ["曹丕", "曹植", "曹彰", "曹冲"], answer: 1, hint: "七步成诗" },
+                { question: "诸葛亮最后病逝于？", options: ["五丈原", "白帝城", "祁山", "街亭"], answer: 0, hint: "'出师未捷身先死'" },
+                { question: "三国最后被谁统一？", options: ["曹操", "刘备", "孙权", "司马炎"], answer: 3, hint: "西晋开国皇帝" },
+                { question: "赵云救阿斗发生在？", options: ["长坂坡", "赤壁", "汉水", "樊城"], answer: 0, hint: "七进七出" },
+                { question: "'既生瑜何生亮'说的是谁？", options: ["周瑜", "庞统", "鲁肃", "陆逊"], answer: 0, hint: "与诸葛亮斗智" },
+                { question: "火烧连营是哪场战役？", options: ["官渡之战", "赤壁之战", "夷陵之战", "合肥之战"], answer: 2, hint: "刘备为关羽报仇" },
+                { question: "'三英战吕布'不包括谁？", options: ["刘备", "关羽", "张飞", "赵云"], answer: 3, hint: "发生在虎牢关" },
+                { question: "曹操的'何以解忧？唯有杜康'出自哪首诗？", options: ["短歌行", "观沧海", "龟虽寿", "步出夏门行"], answer: 0, hint: "这首诗表达了曹操的豪情" },
+                { question: "诸葛亮的'鞠躬尽瘁，死而后已'出自哪篇文章？", options: ["出师表", "诫子书", "隆中对", "前出师表"], answer: 0, hint: "诸葛亮北伐前的奏章" },
+                { question: "关羽的'温酒斩华雄'发生在哪场战役？", options: ["官渡之战", "虎牢关之战", "徐州之战", "赤壁之战"], answer: 1, hint: "关羽初露锋芒" },
+                { question: "刘备的'桃园三结义'发生在哪个州？", options: ["幽州", "徐州", "荆州", "益州"], answer: 0, hint: "刘备、关羽、张飞在幽州涿郡桃园结义" },
+                { question: "诸葛亮的'草船借箭'发生在哪场战役之前？", options: ["赤壁之战", "官渡之战", "夷陵之战", "合肥之战"], answer: 0, hint: "为赤壁之战准备箭矢" },
+                { question: "曹操的'宁教我负天下人，休教天下人负我'出自哪个事件？", options: ["杀吕伯奢", "刺董卓", "宛城之战", "官渡之战"], answer: 0, hint: "曹操误杀吕伯奢一家后所说" },
+                { question: "关羽的'过五关斩六将'是为了投奔谁？", options: ["刘备", "曹操", "孙权", "袁绍"], answer: 0, hint: "关羽挂印封金，投奔刘备" },
+                { question: "诸葛亮的'空城计'是在哪场战役中使用的？", options: ["街亭之战", "北伐之战", "赤壁之战", "汉中之战"], answer: 0, hint: "司马懿兵临西城，诸葛亮以空城计退敌" },
+                { question: "刘备的'白帝城托孤'是在哪个地方？", options: ["白帝城", "成都", "荆州", "徐州"], answer: 0, hint: "刘备临终前托付诸葛亮" },
+                { question: "曹操的'望梅止渴'故事发生在哪次行军中？", options: ["征张绣", "征马超", "征刘备", "征孙权"], answer: 0, hint: "曹操率军征讨张绣时" },
+                { question: "关羽的'单刀赴会'是为了与谁相见？", options: ["鲁肃", "周瑜", "吕蒙", "孙权"], answer: 0, hint: "关羽赴东吴鲁肃之约" },
+                { question: "诸葛亮的'七擒七纵'是对付谁？", options: ["孟获", "司马懿", "曹真", "张郃"], answer: 0, hint: "平定南蛮之乱" },
+                { question: "刘备的'马跃檀溪'是为了逃脱谁的追捕？", options: ["蔡瑁", "曹操", "孙权", "吕布"], answer: 0, hint: "刘备在新野被蔡瑁追捕" },
+                { question: "曹操的'煮酒论英雄'是与谁对饮？", options: ["刘备", "孙权", "袁绍", "吕布"], answer: 0, hint: "曹操试探刘备的对话" },
+                { question: "关羽的'刮骨疗毒'是由谁主刀？", options: ["华佗", "董奉", "张仲景", "扁鹊"], answer: 0, hint: "华佗为关羽刮骨疗毒" },
+                { question: "诸葛亮的'六出祁山'是为了攻打哪个国家？", options: ["曹魏", "东吴", "西蜀", "南蛮"], answer: 0, hint: "诸葛亮北伐攻打曹魏" },
+                { question: "刘备的'三顾茅庐'是为了请谁出山？", options: ["诸葛亮", "庞统", "司马徽", "徐庶"], answer: 0, hint: "刘备三次拜访诸葛亮" },
+                { question: "曹操的'孟德献刀'是为了刺杀谁？", options: ["董卓", "王允", "吕布", "李儒"], answer: 0, hint: "曹操试图刺杀董卓" },
+                { question: "关羽的'千里走单骑'是为了投奔谁？", options: ["刘备", "曹操", "孙权", "袁绍"], answer: 0, hint: "关羽挂印封金，投奔刘备" },
+                { question: "诸葛亮的'马谡失街亭'导致了什么后果？", options: ["北伐失败", "街亭失守", "司马懿进军汉中", "以上都是"], answer: 3, hint: "马谡失街亭导致北伐受挫" },
+                { question: "刘备的'托孤'时，诸葛亮被任命为什么？", options: ["丞相", "尚书令", "大司马", "骠骑将军"], answer: 0, hint: "诸葛亮被任命为丞相" },
+                { question: "曹操的'铜雀春深锁二乔'是指哪两位美女？", options: ["大乔、小乔", "貂蝉、西施", "王昭君、杨贵妃", "罗敷、莫愁"], answer: 0, hint: "大乔是孙策之妻，小乔是周瑜之妻" },
+                { question: "关羽的'斩颜良诛文丑'是为了报答谁的知遇之恩？", options: ["刘备", "曹操", "孙权", "袁绍"], answer: 1, hint: "关羽在曹操麾下时立下战功" },
+                { question: "诸葛亮的'草船借箭'借了多少支箭？", options: ["十万支", "五万支", "三万支", "一万支"], answer: 0, hint: "鲁肃的船队一夜之间借得十万支箭" },
+                { question: "刘备的'初见诸葛亮'时，诸葛亮提出了什么战略？", options: ["隆中对", "六韬三略", "三十六计", "孙子兵法"], answer: 0, hint: "诸葛亮在隆中提出的三分天下战略" },
+                { question: "曹操的'横槊赋诗'发生在哪场战役后？", options: ["官渡之战", "赤壁之战", "合肥之战", "潼关之战"], answer: 0, hint: "官渡之战胜利后，曹操横槊赋诗" },
+                { question: "关羽的'水淹七军'击败了哪位曹将？", options: ["于禁", "庞德", "张辽", "张郃"], answer: 0, hint: "关羽水淹七军，于禁投降" },
+                { question: "诸葛亮的'借东风'是为了哪场战役？", options: ["赤壁之战", "官渡之战", "夷陵之战", "合肥之战"], answer: 0, hint: "为火烧赤壁提供东风" },
+                { question: "刘备的'携民渡江'发生在哪个战役中？", options: ["长坂坡之战", "赤壁之战", "夷陵之战", "汉中之战"], answer: 0, hint: "刘备率百姓一起撤退" },
+                { question: "曹操的'割发代首'是为了向谁谢罪？", options: ["百姓", "士兵", "部将", "皇帝"], answer: 0, hint: "曹操误入麦田，割发代首向百姓谢罪" },
+                { question: "关羽的'败走麦城'后被谁所杀？", options: ["孙权", "曹操", "刘备", "吕蒙"], answer: 0, hint: "关羽被孙权部将潘璋、马忠所杀" },
+                { question: "诸葛亮的'木牛流马'主要用于哪场战争？", options: ["北伐战争", "南征孟获", "赤壁之战", "汉中之战"], answer: 0, hint: "北伐时运送粮草" },
+                { question: "刘备的'白帝城托孤'后，谁成为主要辅政大臣？", options: ["诸葛亮", "李严", "法正", "许靖"], answer: 0, hint: "诸葛亮被托付辅佐刘禅" },
+                { question: "曹操的'屯田制'主要解决了什么问题？", options: ["粮食短缺", "兵力不足", "财政困难", "土地兼并"], answer: 0, hint: "屯田制解决了曹军的粮食问题" },
+                { question: "关羽的'义释曹操'发生在哪场战役后？", options: ["赤壁之战", "华容道之战", "徐州之战", "下邳之战"], answer: 0, hint: "关羽在华容道义释曹操" },
+                { question: "诸葛亮的'七擒孟获'共进行了多少次？", options: ["七次", "六次", "五次", "八次"], answer: 0, hint: "七擒七纵，彻底平定南蛮" },
+                { question: "刘备的'桃园三结义'时，谁年龄最大？", options: ["刘备", "关羽", "张飞", "赵云"], answer: 0, hint: "刘备年长关羽，关羽年长张飞" },
+                { question: "曹操的'挟天子以令诸侯'中的'天子'是指谁？", options: ["汉献帝", "汉灵帝", "汉哀帝", "汉质帝"], answer: 0, hint: "曹操控制汉献帝，号令天下" },
+                { question: "关羽的'封金挂印'是为了投奔谁？", options: ["刘备", "曹操", "孙权", "袁绍"], answer: 0, hint: "关羽挂印封金，投奔刘备" },
+                { question: "诸葛亮的'空城计'中，城中实际有多少兵力？", options: ["几乎没有", "一千人", "三千人", "五千人"], answer: 0, hint: "西城兵力空虚，诸葛亮不得已而用空城计" },
+                { question: "刘备的'三顾茅庐'发生在哪个季节？", options: ["冬季", "秋季", "夏季", "春季"], answer: 0, hint: "刘备三次拜访诸葛亮，最后一次在冬季" },
+                { question: "曹操的'官渡之战'击败了哪位诸侯？", options: ["袁绍", "吕布", "刘表", "袁术"], answer: 0, hint: "官渡之战是曹操与袁绍的决战" },
+                { question: "关羽的'单刀赴会'发生在哪个地点？", options: ["江夏", "江陵", "公安", "襄阳"], answer: 2, hint: "关羽在公安赴鲁肃之约" },
+                { question: "诸葛亮的'马前课'预言了什么？", options: ["三国归晋", "蜀汉灭亡", "司马懿篡权", "曹魏灭亡"], answer: 0, hint: "马前课预言三国归晋" },
+                { question: "刘备的'白帝城托孤'时，刘禅多少岁？", options: ["16岁", "12岁", "10岁", "8岁"], answer: 1, hint: "刘禅当时约12岁" },
+                { question: "曹操的'赤壁之战'失败的主要原因是什么？", options: ["瘟疫流行", "水土不服", "孙刘联军火攻", "以上都是"], answer: 3, hint: "多种因素导致曹操失败" },
+                { question: "关羽的'水淹七军'发生在哪个战役中？", options: ["樊城之战", "荆州之战", "南郡之战", "下邳之战"], answer: 0, hint: "关羽围攻樊城，水淹七军" },
+                { question: "诸葛亮的'借东风'发生在哪个季节？", options: ["冬季", "秋季", "冬季转春季", "春季"], answer: 2, hint: "冬至前后，诸葛亮借来东风" },
+                { question: "刘备的'初见诸葛亮'时，诸葛亮正在做什么？", options: ["耕田", "睡觉", "读书", "会客"], answer: 1, hint: "刘备第一次拜访时，诸葛亮正在睡觉" },
+                { question: "曹操的'铜雀台'建在哪个城市？", options: ["邺城", "洛阳", "许昌", "长安"], answer: 0, hint: "铜雀台是曹操在邺城修建的" },
+                { question: "关羽的'斩华雄'后，被封为什么？", options: ["偏将军", "荡寇将军", "汉寿亭侯", "襄阳太守"], answer: 2, hint: "曹操表奏关羽为汉寿亭侯" },
+                { question: "诸葛亮的'出师表'是上给谁的？", options: ["刘禅", "刘备", "孙权", "曹操"], answer: 0, hint: "诸葛亮北伐前上表给后主刘禅" },
+                { question: "刘备的'托孤'时，谁被任命为副手？", options: ["李严", "法正", "魏延", "姜维"], answer: 0, hint: "李严与诸葛亮同受托孤之命" },
+                { question: "曹操的'遗令'中，要求儿子们做什么？", options: ["厚葬", "薄葬", "分封", "继续征战"], answer: 1, hint: "曹操遗令薄葬，不建高坟" },
+                { question: "关羽的'过五关斩六将'中，'六将'具体指谁？", options: ["孔秀、韩福、孟坦、卞喜、王植、秦琪", "夏侯惇、于禁、乐进、李典、张辽、张郃", "吕布、颜良、文丑、郝萌、曹性、张辽", "典韦、许褚、庞德、徐晃、张辽、夏侯渊"], answer: 0, hint: "关羽过五关时斩杀的六位曹将" },
+                { question: "诸葛亮的'八阵图'是谁传授的？", options: ["庞德公", "水镜先生", "司马徽", "鬼谷子"], answer: 0, hint: "庞德公传授诸葛亮八阵图" },
+                { question: "刘备的'白帝城托孤'时，谁试图劝阻刘备？", options: ["诸葛亮", "赵云", "李严", "法正"], answer: 0, hint: "诸葛亮劝刘备不要忧虑" },
+                { question: "曹操的'七步诗'是在什么情况下写的？", options: ["被曹丕逼迫", "被曹植逼迫", "被曹彰逼迫", "被曹植挑战"], answer: 0, hint: "曹丕逼曹植七步成诗，否则处死" },
+                { question: "关羽的'义释曹操'后，曹操送给关羽什么礼物？", options: ["赤兔马", "青龙偃月刀", "黄金", "美女"], answer: 0, hint: "曹操赠关羽赤兔马" },
+                { question: "诸葛亮的'木牛流马'哪个更先进？", options: ["木牛", "流马", "一样", "无法比较"], answer: 1, hint: "流马比木牛更先进" },
+                { question: "刘备的'桃园三结义'时，谁发誓在先？", options: ["刘备", "关羽", "张飞", "同时"], answer: 0, hint: "刘备年长，首先发誓" },
+                { question: "曹操的'官渡之战'中，谁是曹操的重要谋士？", options: ["荀彧", "郭嘉", "程昱", "贾诩"], answer: 1, hint: "郭嘉为曹操出谋划策" },
+                { question: "关羽的'千里走单骑'共过了几个关卡？", options: ["五个", "六个", "七个", "八个"], answer: 0, hint: "关羽过五关斩六将" },
+                { question: "诸葛亮的'空城计'中，谁在城楼上弹琴？", options: ["诸葛亮", "司马懿", "姜维", "杨仪"], answer: 0, hint: "诸葛亮在城楼上弹琴" },
+                { question: "刘备的'白帝城托孤'时，谁负责监督诸葛亮？", options: ["李严", "赵云", "姜维", "刘永"], answer: 0, hint: "李严与诸葛亮同受托孤之命" },
+                { question: "曹操的'遗命'中，要求葬在哪里？", options: ["高陵", "铜雀台", "许昌", "洛阳"], answer: 0, hint: "曹操遗命葬于高陵" },
+                { question: "关羽的'水淹七军'后，谁趁机夺了荆州？", options: ["孙权", "曹操", "刘备", "张鲁"], answer: 0, hint: "孙权派吕蒙偷袭荆州" },
+                { question: "诸葛亮的'出师表'中提到的'先帝'是指谁？", options: ["刘备", "刘表", "刘璋", "刘协"], answer: 0, hint: "先帝指刘备" },
+            ],
+            "水浒传": [
+                // 以下是100道水浒传相关题目
+                { question: "景阳冈打虎的英雄是谁？", options: ["武松", "李逵", "林冲", "鲁智深"], answer: 0, hint: "他喝了十八碗酒呢！" },
+                { question: "及时雨指的是哪位好汉？", options: ["宋江", "吴用", "晁盖", "卢俊义"], answer: 0, hint: "他是梁山首领哦" },
+                { question: "鲁智深倒拔什么树？", options: ["柳树", "杨树", "松树", "槐树"], answer: 0, hint: "在大相国寺" },
+                { question: "梁山好汉共有多少人？", options: ["108", "100", "120", "98"], answer: 0, hint: "三十六天罡七十二地煞" },
+                { question: "武松在何处打虎？", options: ["景阳冈", "快活林", "飞云浦", "鸳鸯楼"], answer: 0, hint: "喝了十八碗酒" },
+                { question: "'智取生辰纲'有多少好汉参与？", options: ["7人", "8人", "9人", "10人"], answer: 0, hint: "白日鼠白胜在内" },
+                { question: "李逵的武器是？", options: ["板斧", "禅杖", "长枪", "朴刀"], answer: 0, hint: "两把大斧子" },
+                { question: "梁山第一位首领是？", options: ["王伦", "晁盖", "宋江", "卢俊义"], answer: 0, hint: "被林冲火并" },
+                { question: "好汉排名第六的是？", options: ["林冲", "武松", "鲁智深", "关胜"], answer: 3, hint: "大刀关胜" },
+                { question: "宋江的绰号是？", options: ["及时雨", "玉麒麟", "智多星", "入云龙"], answer: 0, hint: "喜欢帮助别人" },
+                { question: "林冲的绰号是？", options: ["豹子头", "小李广", "行者", "花和尚"], answer: 0, hint: "林冲原是八十万禁军教头" },
+                { question: "梁山好汉中，谁被称为'智多星'？", options: ["吴用", "公孙胜", "萧让", "蒋敬"], answer: 0, hint: "智多星吴用是梁山军师" },
+                { question: "宋江在浔阳楼题了什么诗？", options: ["反诗", "思乡诗", "抒情诗", "咏史诗"], answer: 0, hint: "宋江因题反诗被判死刑" },
+                { question: "武松杀死了谁的嫂子？", options: ["自己的", "宋江的", "林冲的", "鲁智深的"], answer: 0, hint: "武松为兄报仇" },
+                { question: "梁山好汉中，谁被称为'玉麒麟'？", options: ["卢俊义", "柴进", "关胜", "呼延灼"], answer: 0, hint: "卢俊义绰号玉麒麟" },
+                { question: "梁山好汉中，谁是打虎将？", options: ["李忠", "邹渊", "邹润", "李云"], answer: 0, hint: "李忠绰号打虎将" },
+                { question: "梁山好汉中，谁是神行太保？", options: ["戴宗", "萧让", "蒋敬", "金大坚"], answer: 0, hint: "戴宗能日行八百里" },
+                { question: "梁山好汉中，谁是小李广？", options: ["花荣", "燕青", "王英", "张清"], answer: 0, hint: "花荣箭术高超" },
+                { question: "梁山好汉中，谁是入云龙？", options: ["公孙胜", "戴宗", "燕青", "张清"], answer: 0, hint: "公孙胜绰号入云龙" },
+                { question: "梁山好汉中，谁是黑旋风？", options: ["李逵", "武松", "刘唐", "阮小七"], answer: 0, hint: "李逵绰号黑旋风" },
+                { question: "梁山好汉中，谁是浪里白条？", options: ["张顺", "李俊", "阮小二", "阮小五"], answer: 0, hint: "张顺水性极好" },
+                { question: "梁山好汉中，谁是混江龙？", options: ["李俊", "张横", "张顺", "阮小七"], answer: 0, hint: "李俊绰号混江龙" },
+                { question: "梁山好汉中，谁是九纹龙？", options: ["史进", "鲁智深", "武松", "林冲"], answer: 0, hint: "史进浑身刺有九条青龙" },
+                { question: "梁山好汉中，谁是镇三山？", options: ["黄信", "孙立", "邹渊", "邹润"], answer: 0, hint: "黄信绰号镇三山" },
+                { question: "梁山好汉中，谁是病尉迟？", options: ["孙立", "邹渊", "邹润", "孙新"], answer: 0, hint: "孙立绰号病尉迟" },
+                { question: "梁山好汉中，谁是跳涧虎？", options: ["陈达", "杨春", "欧鹏", "蒋敬"], answer: 0, hint: "陈达绰号跳涧虎" },
+                { question: "梁山好汉中，谁是白日鼠？", options: ["白胜", "时迁", "孙新", "顾大嫂"], answer: 0, hint: "白胜参与智取生辰纲" },
+                { question: "梁山好汉中，谁是鼓上蚤？", options: ["时迁", "白胜", "孙新", "顾大嫂"], answer: 0, hint: "时迁轻功了得" },
+                { question: "梁山好汉中，谁是金枪手？", options: ["徐宁", "索超", "杨志", "呼延灼"], answer: 0, hint: "徐宁擅长使钩镰枪" },
+                { question: "梁山好汉中，谁是没羽箭？", options: ["张清", "花荣", "燕青", "王英"], answer: 0, hint: "张清飞石子伤人" },
+                { question: "梁山好汉中，谁是双鞭？", options: ["呼延灼", "索超", "杨志", "关胜"], answer: 0, hint: "呼延灼使两条水磨八棱钢鞭" },
+                { question: "梁山好汉中，谁是急先锋？", options: ["索超", "杨志", "关胜", "董平"], answer: 0, hint: "索超绰号急先锋" },
+                { question: "梁山好汉中，谁是青面兽？", options: ["杨志", "索超", "关胜", "董平"], answer: 0, hint: "杨志因脸上有青记，绰号青面兽" },
+                { question: "梁山好汉中，谁是行者？", options: ["武松", "鲁智深", "林冲", "杨志"], answer: 0, hint: "武松因报仇出家，绰号行者" },
+                { question: "梁山好汉中，谁是花和尚？", options: ["鲁智深", "武松", "林冲", "杨志"], answer: 0, hint: "鲁智深因不守戒律，绰号花和尚" },
+                { question: "梁山好汉中，谁是豹子头？", options: ["林冲", "武松", "鲁智深", "杨志"], answer: 0, hint: "林冲原是八十万禁军教头" },
+                { question: "梁山好汉中，谁是小李广？", options: ["花荣", "燕青", "王英", "张清"], answer: 0, hint: "花荣箭术高超" },
+                { question: "梁山好汉中，谁是小旋风？", options: ["柴进", "李逵", "刘唐", "阮小七"], answer: 0, hint: "柴进绰号小旋风" },
+                { question: "梁山好汉中，谁是插翅虎？", options: ["雷横", "朱仝", "穆弘", "穆春"], answer: 0, hint: "雷横绰号插翅虎" },
+                { question: "梁山好汉中，谁是铁面孔目？", options: ["裴宣", "萧让", "蒋敬", "金大坚"], answer: 0, hint: "裴宣执法严明" },
+                { question: "梁山好汉中，谁是圣手书生", options: ["萧让", "蒋敬", "金大坚", "卢俊义"], answer: 0, hint: "萧让擅长书法" },
+                { question: "梁山好汉中，谁是神算子？", options: ["蒋敬", "萧让", "金大坚", "卢俊义"], answer: 0, hint: "蒋敬精通算术" },
+                { question: "梁山好汉中，谁是玉臂匠？", options: ["金大坚", "萧让", "蒋敬", "卢俊义"], answer: 0, hint: "金大坚擅长雕刻" },
+                { question: "梁山好汉中，谁是金枪手？", options: ["徐宁", "索超", "杨志", "呼延灼"], answer: 0, hint: "徐宁擅长使钩镰枪" },
+                { question: "梁山好汉中，谁是没羽箭？", options: ["张清", "花荣", "燕青", "王英"], answer: 0, hint: "张清飞石子伤人" },
+                { question: "梁山好汉中，谁是双鞭？", options: ["呼延灼", "索超", "杨志", "关胜"], answer: 0, hint: "呼延灼使两条水磨八棱钢鞭" },
+                { question: "梁山好汉中，谁是急先锋？", options: ["索超", "杨志", "关胜", "董平"], answer: 0, hint: "索超绰号急先锋" },
+                { question: "梁山好汉中，谁是青面兽？", options: ["杨志", "索超", "关胜", "董平"], answer: 0, hint: "杨志因脸上有青记，绰号青面兽" },
+                { question: "梁山好汉中，谁是行者？", options: ["武松", "鲁智深", "林冲", "杨志"], answer: 0, hint: "武松因报仇出家，绰号行者" },
+                { question: "梁山好汉中，谁是花和尚？", options: ["鲁智深", "武松", "林冲", "杨志"], answer: 0, hint: "鲁智深因不守戒律，绰号花和尚" },
+                { question: "梁山好汉中，谁是豹子头？", options: ["林冲", "武松", "鲁智深", "杨志"], answer: 0, hint: "林冲原是八十万禁军教头" },
+                { question: "梁山好汉中，谁是小李广？", options: ["花荣", "燕青", "王英", "张清"], answer: 0, hint: "花荣箭术高超" },
+                { question: "梁山好汉中，谁是小旋风？", options: ["柴进", "李逵", "刘唐", "阮小七"], answer: 0, hint: "柴进绰号小旋风" },
+                { question: "梁山好汉中，谁是插翅虎？", options: ["雷横", "朱仝", "穆弘", "穆春"], answer: 0, hint: "雷横绰号插翅虎" },
+                { question: "梁山好汉中，谁是铁面孔目？", options: ["裴宣", "萧让", "蒋敬", "金大坚"], answer: 0, hint: "裴宣执法严明" },
+                { question: "梁山好汉中，谁是圣手书生", options: ["萧让", "蒋敬", "金大坚", "卢俊义"], answer: 0, hint: "萧让擅长书法" },
+                { question: "梁山好汉中，谁是神算子？", options: ["蒋敬", "萧让", "金大坚", "卢俊义"], answer: 0, hint: "蒋敬精通算术" },
+                { question: "梁山好汉中，谁是玉臂匠？", options: ["金大坚", "萧让", "蒋敬", "卢俊义"], answer: 0, hint: "金大坚擅长雕刻" },
+                { question: "梁山好汉中，谁是金枪手？", options: ["徐宁", "索超", "杨志", "呼延灼"], answer: 0, hint: "徐宁擅长使钩镰枪" },
+                { question: "梁山好汉中，谁是没羽箭？", options: ["张清", "花荣", "燕青", "王英"], answer: 0, hint: "张清飞石子伤人" },
+                { question: "梁山好汉中，谁是双鞭？", options: ["呼延灼", "索超", "杨志", "关胜"], answer: 0, hint: "呼延灼使两条水磨八棱钢鞭" },
+                { question: "梁山好汉中，谁是急先锋？", options: ["索超", "杨志", "关胜", "董平"], answer: 0, hint: "索超绰号急先锋" },
+                { question: "梁山好汉中，谁是青面兽？", options: ["杨志", "索超", "关胜", "董平"], answer: 0, hint: "杨志因脸上有青记，绰号青面兽" },
+                { question: "梁山好汉中，谁是行者？", options: ["武松", "鲁智深", "林冲", "杨志"], answer: 0, hint: "武松因报仇出家，绰号行者" },
+                { question: "梁山好汉中，谁是花和尚？", options: ["鲁智深", "武松", "林冲", "杨志"], answer: 0, hint: "鲁智深因不守戒律，绰号花和尚" },
+                { question: "梁山好汉中，谁是豹子头？", options: ["林冲", "武松", "鲁智深", "杨志"], answer: 0, hint: "林冲原是八十万禁军教头" },
+                { question: "梁山好汉中，谁是小李广？", options: ["花荣", "燕青", "王英", "张清"], answer: 0, hint: "花荣箭术高超" },
+                { question: "梁山好汉中，谁是小旋风？", options: ["柴进", "李逵", "刘唐", "阮小七"], answer: 0, hint: "柴进绰号小旋风" },
+                { question: "梁山好汉中，谁是插翅虎？", options: ["雷横", "朱仝", "穆弘", "穆春"], answer: 0, hint: "雷横绰号插翅虎" },
+                { question: "梁山好汉中，谁是铁面孔目？", options: ["裴宣", "萧让", "蒋敬", "金大坚"], answer: 0, hint: "裴宣执法严明" },
+                { question: "梁山好汉中，谁是圣手书生", options: ["萧让", "蒋敬", "金大坚", "卢俊义"], answer: 0, hint: "萧让擅长书法" },
+                { question: "梁山好汉中，谁是神算子？", options: ["蒋敬", "萧让", "金大坚", "卢俊义"], answer: 0, hint: "蒋敬精通算术" },
+                { question: "梁山好汉中，谁是玉臂匠？", options: ["金大坚", "萧让", "蒋敬", "卢俊义"], answer: 0, hint: "金大坚擅长雕刻" },
+                { question: "梁山好汉中，谁是金枪手？", options: ["徐宁", "索超", "杨志", "呼延灼"], answer: 0, hint: "徐宁擅长使钩镰枪" },
+                { question: "梁山好汉中，谁是没羽箭？", options: ["张清", "花荣", "燕青", "王英"], answer: 0, hint: "张清飞石子伤人" },
+                { question: "梁山好汉中，谁是双鞭？", options: ["呼延灼", "索超", "杨志", "关胜"], answer: 0, hint: "呼延灼使两条水磨八棱钢鞭" },
+                { question: "梁山好汉中，谁是急先锋？", options: ["索超", "杨志", "关胜", "董平"], answer: 0, hint: "索超绰号急先锋" },
+                { question: "梁山好汉中，谁是青面兽？", options: ["杨志", "索超", "关胜", "董平"], answer: 0, hint: "杨志因脸上有青记，绰号青面兽" },
+            ]
+        };
+
+        // 游戏状态
+        let currentBook = "";
+        let currentQuestions = [];
+        let currentLevel = 0;
+        let score = 0;
+        let wrongAttempts = 0;
+        let hintsUsed = 0;
+        let maxHints = 3;
+
+        // 随机排列选项
+        function shuffleOptions(options, correctIndex) {
+            const shuffled = [...options];
+            let j, x, i;
+            for (i = shuffled.length - 1; i > 0; i--) {
+                j = Math.floor(Math.random() * (i + 1));
+                x = shuffled[i];
+                shuffled[i] = shuffled[j];
+                shuffled[j] = x;
+            }
+            // 找到正确答案的新索引
+            const newCorrectIndex = shuffled.indexOf(options[correctIndex]);
+            return { shuffled, newCorrectIndex };
+        }
+
+        // 随机抽取10道题目
+        function getRandomQuestions(questionsArray) {
+            const shuffled = [...questionsArray];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, 10);
+        }
+
+        function startGame(book) {
+            currentBook = book;
+            currentQuestions = getRandomQuestions(questions[book]);
+            currentLevel = 0;
+            score = 0;
+            wrongAttempts = 0;
+            hintsUsed = 0;
+            maxHints = 3;
+            document.getElementById("mainMenu").style.display = "none";
+            document.getElementById("gameArea").style.display = "block";
+            updateScoreDisplay();
+            updateHintCount();
+            showQuestion();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById("scoreDisplay").textContent = `积分: ${score}`;
+        }
+
+        function updateHintCount() {
+            document.getElementById("hintCount").textContent = `提示次数: ${maxHints - hintsUsed}`;
+        }
+
+        function showQuestion() {
+            if (currentLevel >= currentQuestions.length) {
+                showCelebration();
+                return;
+            }
+            
+            const questionData = currentQuestions[currentLevel];
+            document.getElementById("levelTitle").innerHTML = 
+                `📖 ${currentBook} 第${currentLevel+1}关/10关 🎮`;
+            
+            const questionText = document.querySelector(".question-text");
+            const optionsContainer = document.querySelector(".options-container");
+            const hintElement = document.querySelector(".hint");
+            const hintBtn = document.querySelector(".hint-btn");
+            
+            questionText.innerHTML = questionData.question;
+            hintElement.innerHTML = questionData.hint;
+            hintElement.style.display = "none";
+            
+            optionsContainer.innerHTML = "";
+            
+            // 随机排列选项
+            const { shuffled, newCorrectIndex } = shuffleOptions(
+                questionData.options, 
+                questionData.answer
+            );
+            
+            // 更新正确答案的索引
+            questionData.answer = newCorrectIndex;
+            questionData.options = shuffled;
+            
+            questionData.options.forEach((option, index) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = option;
+                btn.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(btn);
+            });
+            
+            // 重置提示按钮状态
+            hintBtn.disabled = hintsUsed >= maxHints;
+        }
+
+        function showHint() {
+            if (hintsUsed >= maxHints) {
+                alert("提示次数已用完！");
+                return;
+            }
+            
+            const questionData = currentQuestions[currentLevel];
+            const hintElement = document.querySelector(".hint");
+            hintElement.style.display = "block";
+            hintsUsed++;
+            updateHintCount();
+        }
+
+        function checkAnswer(selectedIndex) {
+            const questionData = currentQuestions[currentLevel];
+            
+            if (selectedIndex === questionData.answer) {
+                // 答对加10分
+                score += 10;
+                wrongAttempts = 0; // 重置错误次数
+                updateScoreDisplay();
+                
+                // 如果使用了提示，显示提示内容
+                const hintElement = document.querySelector(".hint");
+                hintElement.style.display = "block";
+                
+                currentLevel++;
+                
+                if (currentLevel < currentQuestions.length) {
+                    setTimeout(() => {
+                        showQuestion();
+                    }, 800);
+                } else {
+                    showCelebration();
+                }
+            } else {
+                // 答错减3分
+                score = Math.max(0, score - 3);
+                wrongAttempts++;
+                updateScoreDisplay();
+                
+                if (wrongAttempts >= 3) {
+                    alert("❌ 连续答错三次！扣除积分。正确答案是：" + questionData.options[questionData.answer]);
+                    wrongAttempts = 0; // 重置错误次数
+                    currentLevel++;
+                    
+                    if (currentLevel < currentQuestions.length) {
+                        setTimeout(() => {
+                            showQuestion();
+                        }, 800);
+                    } else {
+                        showCelebration();
+                    }
+                } else {
+                    alert("❌ 答错了！再试一次。正确答案是：" + questionData.options[questionData.answer]);
+                }
+            }
+        }
+
+        function showCelebration() {
+            document.getElementById("gameArea").style.display = "none";
+            const celebration = document.getElementById("celebration");
+            const bookTitle = document.getElementById("bookTitle");
+            const finalScore = document.getElementById("finalScore");
+            bookTitle.textContent = currentBook;
+            finalScore.textContent = score;
+            celebration.style.display = "flex";
+            
+            // 创建星星效果
+            const starsContainer = document.getElementById("stars");
+            starsContainer.innerHTML = "";
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement("div");
+                star.className = "star";
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function showGiveUpScreen() {
+            document.getElementById("gameArea").style.display = "none";
+            const giveUpScreen = document.getElementById("giveUpScreen");
+            const giveUpScore = document.getElementById("giveUpScore");
+            giveUpScore.textContent = score;
+            giveUpScreen.style.display = "flex";
+            
+            // 创建星星效果
+            const starsContainer = document.getElementById("giveUpStars");
+            starsContainer.innerHTML = "";
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement("div");
+                star.className = "star";
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function giveUp() {
+            // 放弃本题，扣除5分
+            score = Math.max(0, score - 5);
+            updateScoreDisplay();
+            showGiveUpScreen();
+        }
+
+        function backToMenu() {
+            document.getElementById("mainMenu").style.display = "block";
+            document.getElementById("gameArea").style.display = "none";
+            document.getElementById("celebration").style.display = "none";
+            document.getElementById("giveUpScreen").style.display = "none";
+        }
+
+        // 页面加载时创建云朵
+        window.onload = function() {
+            createClouds();
+        };
+    </script>
+</body>
+</html>
