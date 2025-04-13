@@ -13,6 +13,20 @@
     align-items: center;
 }
 
+.custom-align {
+    text-align: left; /* 整体左对齐 */
+    text-align-last: left; /* 确保最后一行也左对齐 */
+    text-indent: 2em; /* 首行缩进两个字符 */
+}
+
+/* 确保在所有浏览器中都能正常工作 */
+.custom-align {
+    -webkit-text-align-last: left;
+    -moz-text-align-last: left;
+    -ms-text-align-last: left;
+    text-align-last: left;
+}
+
 .hero h1 {
     font-size: 4rem;
     margin-bottom: 2rem;
@@ -23,6 +37,7 @@
     font-size: 1.6rem;
     max-width: 1000px;
     margin: 0 auto 3rem;
+    text-indent: 2em; /* 2em通常对应两个中文字符的宽度 */
 }
 
 .btn {

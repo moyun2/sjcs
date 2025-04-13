@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI小助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=STXingkai&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/deepseek.css">
+</head>
+<body>
+    <!-- 主导航栏 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="../static/img/logo.png" alt="logo">
+                智驭光影·重塑经典
+            </div>
+            <nav>
+                <ul>
+                    <li class="nav-item"><a href="../index.html">首页</a></li>
+                    <li class="nav-item"><a href="../templates/class.html">课程</a></li>
+                    <li class="nav-item"><a href="../templates/culture.html">文化</a></li>
+                    <li class="nav-item"><a href="../templates/activity.html">活动</a></li>
+                    <li class="nav-item"><a href="../templates/speclal.html">特别专栏</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <section class="ai-container">
+            <div class="ai-header">
+                <h2>AI小助手</h2>
+                <p>输入您的问题，AI将为您解答</p>
+            </div>
+            <div class="chat-box" id="chatBox">
+                <!-- 聊天记录将在这里显示 -->
+            </div>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="请输入您的问题...">
+                <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="#">合作机构</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">帮助中心</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>联系我们</h4>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt"></i> 重庆市沙坪坝区壮志路33号</p>
+                        <p><i class="fas fa-phone"></i> 023-65385538</p>
+                    </address>
+                </div>
+                <div class="footer-social">
+                    <h4>社交媒体</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-bilibili"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-douyin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-subscribe">
+                    <h4>订阅通知</h4>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="输入您的邮箱" class="subscribe-input">
+                        <button type="submit" class="subscribe-button">订阅</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 四境穿梭. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI模拟入口 -->
+    <div class="ai-entry">
+        <a href="deepseek.html"></a>
+    </div>
+
+    <script>
+        // 汉堡菜单切换
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+
+        // AI模拟助手功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatBox = document.getElementById('chatBox');
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+
+            // 预设的AI回答
+            const aiResponses = {
+                '你好': '你好！有什么我可以帮助你的吗？',
+                '你是谁': '我是一个模拟AI助手，很高兴为你服务！',
+                '你能做什么': '我可以回答你的问题，提供信息，或者进行简单的对话。',
+                '四大名著': '四大名著是中国文学的经典作品，包括《红楼梦》、《三国演义》、《水浒传》和《西游记》。',
+                '红楼梦': '《红楼梦》是曹雪芹创作的一部古典小说，描写了贾、史、王、薛四大家族的兴衰。',
+                '三国演义': '《三国演义》是罗贯中创作的一部历史小说，描写了东汉末年魏、蜀、吴三国之间的政治和军事斗争。',
+                '水浒传': '《水浒传》是施耐庵创作的一部小说，讲述了北宋末年以宋江为首的108位好汉在梁山泊聚义的故事。',
+                '西游记': '《西游记》是吴承恩创作的一部神话小说，描写了唐僧师徒四人西天取经的奇幻冒险故事。',
+                '默认': '抱歉，我没有理解你的问题。请尝试其他问题。'
+            };
+
+            // 发送消息
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+
+                // 添加用户消息
+                addMessage('user', message);
+
+                // 清空输入框
+                userInput.value = '';
+
+                // 模拟AI回复
+                setTimeout(() => {
+                    const response = aiResponses[message] || aiResponses['默认'];
+                    addMessage('ai', response);
+                }, 1000);
+            }
+
+            // 添加消息到聊天框
+            function addMessage(sender, text) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', sender);
+
+                if (sender === 'user') {
+                    messageElement.innerHTML = `
+                        <div class="message-bubble user-bubble">
+                            <span class="message-text">${text}</span>
+                        </div>
+                    `;
+                } else {
+                    messageElement.innerHTML = `
+                        <div class="message-bubble ai-bubble">
+                            <span class="message-text">${text}</span>
+                        </div>
+                    `;
+                }
+
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            // 点击发送按钮
+            sendBtn.addEventListener('click', sendMessage);
+
+            // 按Enter键发送
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // 初始化聊天
+            addMessage('ai', '你好！我是你的AI助手，有什么我可以帮助你的吗？');
+        });
+    </script>
+</body>
+</html>

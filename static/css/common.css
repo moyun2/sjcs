@@ -138,16 +138,6 @@ nav ul li a:hover {
   }
 }
 
-/* 添加汉堡菜单按钮 */
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
 /* 移动端样式 */
 @media (max-width: 768px) {
   .menu-toggle {
@@ -182,6 +172,49 @@ nav ul li a:hover {
   .logo img {
     height: 40px;
   }
+}
+
+
+/* ai部分 */
+.ai-entry {
+  position: fixed;
+  bottom: 20px; /* 距离底部的距离 */
+  right: 20px; /* 距离右侧的距离 */
+  z-index: 1000; /* 确保图片在页面其他内容之上 */
+  width: 60px; /* 图片宽度 */
+  height: 60px; /* 图片高度 */
+  border-radius: 50%; /* 如果需要圆形图片 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+  transition: transform 0.3s ease; /* 添加悬停效果 */
+  background-image: url('../img/logo.png'); /* 图片路径 */
+  background-size: cover; /* 确保图片覆盖整个区域 */
+  background-position: center; /* 确保图片居中 */
+  cursor: pointer; /* 添加鼠标悬停时的手型光标 */
+}
+
+.ai-entry:hover {
+  transform: scale(1.1); /* 鼠标悬停时放大图片 */
+}
+
+.ai-entry::after {
+  content: "AI助手"; /* 添加提示文字 */
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  color: #333;
+  background-color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ai-entry:hover::after {
+  opacity: 1; /* 鼠标悬停时显示提示文字 */
 }
 
 /* 如果需要在小屏幕上调整logo大小 */

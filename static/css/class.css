@@ -1,81 +1,98 @@
 /* 课程网格 */
 .classic-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2.5rem;
-    margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .classic-card {
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
 }
 
 .classic-card:hover {
-    transform: translateY(-12px);
+  transform: translateY(-12px);
 }
 
 .classic-img {
-    height: 200px;
-    overflow: hidden;
+  height: 200px;
+  overflow: hidden;
 }
 
 .classic-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .classic-info {
-    padding: 2rem;
+  padding: 2rem;
 }
 
 .classic-title {
-    font-size: 2rem;
-    margin-bottom: 0.8rem;
-    color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  color: #333;
 }
 
 .classic-desc {
-    color: #666;
-    margin-bottom: 1.2rem;
-    font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
 }
 
+@media (max-width: 1200px) {
+  .classic-grid {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
 
-@media (max-width: 480px) {
-    .classic-grid {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
-    }
-    
-    .classic-card {
-      margin: 0 auto;
-      max-width: 320px;
-    }
+@media (max-width: 992px) {
+  .classic-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .classic-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
   
   .classic-img {
-    height: 180px;
+      height: 150px;
   }
   
-  @media (max-width: 768px) {
-    .classic-img {
-      height: 150px;
-    }
-    
-    .classic-info {
+  .classic-info {
       padding: 1.2rem;
-    }
-    
-    .classic-title {
-      font-size: 1.5rem;
-    }
-    
-    .classic-desc {
-      font-size: 0.9rem;
-    }
   }
+  
+  .classic-title {
+      font-size: 1.5rem;
+  }
+  
+  .classic-desc {
+      font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .classic-grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+  }
+  
+  .classic-card {
+      margin: 0 auto;
+      max-width: 320px;
+  }
+  
+  .classic-img {
+      height: 180px;
+  }
+}
