@@ -258,6 +258,21 @@ body {
     font-size: 0.9rem;
     margin: 0.5rem 0;
 }
+/* 添加首行缩进和段落间距 */
+.novel-intro p {
+    text-indent: 2em;
+    margin-bottom: 6em; /* 相当于两行空行 */
+}
+
+.novel-desc {
+    text-indent: 2em;
+    margin-bottom: 1.5em;
+}
+
+/* 结语部分也需要首行缩进 */
+.conclusion p {
+    text-indent: 2em;
+}
 
 .timeline,
 .culture-background,

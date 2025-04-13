@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光影经典在线</title>
+    <link rel="stylesheet" href="../static/css/activity.css">
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 添加STXingkai字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=STXingkai&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 主导航栏 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="../static/img/logo.png" alt="logo">
+                智驭光影·重塑经典
+            </div>
+            <nav>
+                <ul>
+                    <li class="nav-item"><a href="../index.html">首页</a></li>
+                    <li class="nav-item"><a href="../templates/class.html">课程</a></li>
+                    <li class="nav-item"><a href="../templates/culture.html">文化</a></li>
+                    <li class="nav-item"><a href="../templates/activity.html">活动</a></li>
+                    <li class="nav-item"><a href="../templates/speclal.html">特别专栏</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 轮播图 -->
+    <div class="carousel">
+        <div class="carousel-container">
+            <div class="carousel-slide active">
+                <img src="../static/img/活动图片/1.jpg" alt="轮播图1">
+            </div>
+            <div class="carousel-slide">
+                <img src="../static/img/活动图片/3.jpg" alt="轮播图2">
+            </div>
+            <div class="carousel-slide">
+                <img src="../static/img/活动图片/10.jpg" alt="轮播图3">
+            </div>
+            <div class="carousel-slide">
+                <img src="../static/img/活动图片/12.jpg" alt="轮播图4">
+            </div>
+            <div class="carousel-slide">
+                <img src="../static/img/活动图片/23.jpg" alt="轮播图5">
+            </div>
+            <div class="carousel-slide">
+                <img src="../static/img/活动图片/24.jpg" alt="轮播图6">
+            </div>
+            <div class="carousel-slide">
+                <img src="../static/img/活动图片/25.jpg" alt="轮播图7">
+            </div>
+            <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+            <div class="carousel-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+                <span class="dot" data-index="4"></span>
+                <span class="dot" data-index="5"></span>
+                <span class="dot" data-index="6"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <main>
+        <section class="section" id="training-camp">
+            <div class="container">
+                <h2 class="section-title">皮影戏传承训练营</h2>
+                <!-- 光影影院部分修改 -->
+                <div class="activity-card">
+                    <h3 class="main-title">光影影院</h3>
+                    <div class="image-layout">
+                        <style>
+                            /* 图片布局样式 */
+                            .gallery-layout {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 10px;
+                                margin-bottom: 2rem;
+                                width: 100%;
+                                max-width: 1200px;
+                                margin-left: auto;
+                                margin-right: auto;
+                                background-color: transparent;
+                            }
+                    
+                            .central-image {
+                                flex: 7;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                overflow: visible;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                transition: transform 0.3s ease;
+                                background-color: transparent;
+                                margin: 0;
+                                padding: 0;
+                                border: none;
+                                position: relative;
+                                height: auto;
+                            }
+                    
+                            .sidebar {
+                                flex: 1;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 10px;
+                            }
+                    
+                            .thumbnail-container, .central-image {
+                                cursor: pointer;
+                                transition: transform 0.3s ease;
+                                overflow: hidden;
+                                border-radius: 8px;
+                            }
+                    
+                            .thumbnail-container:hover, .central-image:hover {
+                                transform: scale(1.05);
+                            }
+                    
+                            .thumbnail {
+                                width: 100%;
+                                height: auto;
+                                display: block;
+                                transition: transform 0.3s ease;
+                                background-color: transparent;
+                            }
+                    
+                            .central-image .thumbnail {
+                                width: auto;
+                                height: auto;
+                                max-width: 100%;
+                                max-height: 400px;
+                                object-fit: contain;
+                                margin: 0 auto;
+                            }
+                    
+                            /* 响应式设计 */
+                            @media (max-width: 768px) {
+                                .gallery-layout {
+                                    flex-direction: column;
+                                    align-items: center;
+                                }
+                    
+                                .central-image,
+                                .sidebar {
+                                    width: 100%;
+                                    max-width: none;
+                                }
+                    
+                                .sidebar {
+                                    margin-top: 20px;
+                                    flex-direction: row;
+                                    justify-content: space-around;
+                                }
+                    
+                                .central-image .thumbnail {
+                                    max-height: 300px;
+                                }
+                            }
+                        </style>
+                        <!-- 图片展示部分 -->
+                        <div class="gallery-layout">
+                            <!-- 左侧小图列 -->
+                            <div class="sidebar">
+                                <div class="thumbnail-container" onclick="showModal(this)">
+                                    <img src="../static/img/活动图片/activity/piying1.png" class="thumbnail" alt="图1">
+                                </div>
+                                <div class="thumbnail-container" onclick="showModal(this)">
+                                    <img src="../static/img/活动图片/activity/piying2.png" class="thumbnail" alt="图2">
+                                </div>
+                            </div>
+                    
+                            <!-- 中间大图 -->
+                            <div class="central-image" onclick="showModal(this)">
+                                <img src="../static/img/活动图片/activity/guangyingmain.png" class="thumbnail" alt="图3">
+                            </div>
+                    
+                            <!-- 右侧小图列 -->
+                            <div class="sidebar">
+                                <div class="thumbnail-container" onclick="showModal(this)">
+                                    <img src="../static/img/活动图片/activity/piying4.png" class="thumbnail" alt="图4">
+                                </div>
+                                <div class="thumbnail-container" onclick="showModal(this)">
+                                    <img src="../static/img/活动图片/activity/piying3.png" class="thumbnail" alt="图5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="desc-container">
+                        <h4>剧目点播系统</h4>
+                        <ul class="feature-list">
+                            <li>名著系列专题（AI解说/多语言字幕开关）</li>
+                            <li>弹幕互动区（支持AI自动翻译多语言留言）</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 匠人工坊 -->
+                <div class="activity-card">
+                    <h3 class="main-title">匠人工坊</h3>
+                    <div class="image-layout">
+                        <style>
+                            /* 基础样式重置 */
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                    
+                            /* 方案一：等高排列（保持图片完整显示） */
+                            .vertical-container {
+                                display: flex;
+                                gap: 20px;
+                                max-width: 1200px;
+                                margin: 20px auto;
+                                padding: 0 20px;
+                            }
+                            .vertical-container img {
+                                flex: 1;
+                                width: 30%; /* 基础宽度 */
+                                min-width: 250px; /* 最小宽度 */
+                                height: 400px; /* 固定容器高度 */
+                                object-fit: contain; /* 完整显示图片 */
+                                border: 1px solid #ddd;
+                                background: #f8f8f8;
+                                padding: 5px;
+                            }
+                    
+                            /* 方案二：自适应高度（瀑布流效果） */
+                            .adaptive-container {
+                                display: grid;
+                                grid-template-columns: repeat(3, 1fr);
+                                gap: 20px;
+                                max-width: 1200px;
+                                margin: 20px auto;
+                                padding: 0 20px;
+                            }
+                            .adaptive-container img {
+                                width: 100%;
+                                height: auto; /* 高度自适应 */
+                                max-height: 600px; /* 防止过高 */
+                                object-fit: cover;
+                                vertical-align: top; /* 消除图片底部间隙 */
+                            }
+                    
+                            /* 响应式设计 */
+                            @media (max-width: 768px) {
+                                .vertical-container {
+                                    flex-wrap: wrap;
+                                    height: auto;
+                                }
+                                .vertical-container img {
+                                    height: 300px;
+                                    flex: 0 0 calc(50% - 10px);
+                                }
+                    
+                                .adaptive-container {
+                                    grid-template-columns: 1fr;
+                                }
+                            }
+                        </style>
+                        <!-- 方案二：自适应高度 -->
+                        <div class="adaptive-container">
+                            <img src="../static/img/活动图片/activity/匠人工坊1.jpg" alt="纵向图片1">
+                            <img src="../static/img/活动图片/activity/匠人工坊.jpg" alt="纵向图片2">
+                            <img src="../static/img/活动图片/activity/匠人工坊2.jpg" alt="纵向图片3">
+                        </div>
+                    </div>
+                    </div>
+                    <div class="desc-container">
+                        <h4>DIY教学区</h4>
+                        <ul class="feature-list">
+                            <li>材料包3D展示（悬停显示制作要点）</li>
+                            <li>AR辅助雕刻（扫码实现虚实叠加指导）</li>
+                            <li>作品AI评分系统（分析图案复杂度与传统元素）</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 大师课堂 -->
+                <div class="activity-card">
+                    <h3 class="main-title">大师课堂</h3>
+                    <div class="image-layout">
+                        <style>
+                            /* 基础容器 */
+                            .quad-grid {
+                                display: grid;
+                                grid-template-columns: repeat(4, 1fr); /* 四等分列 */
+                                gap: 15px; /* 统一间距 */
+                                max-width: 1280px;
+                                margin: 20px auto;
+                                padding: 0 15px;
+                            }
+                            
+                            /* 图片样式 */
+                            .quad-grid img {
+                                width: 100%;
+                                height: 250px; /* 统一高度 */
+                                object-fit: cover; /* 保持比例填充 */
+                                border-radius: 6px;
+                                box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+                                transition: transform 0.3s ease;
+                            }
+                            
+                            /* 响应式调整 */
+                            @media (max-width: 1024px) {
+                                .quad-grid {
+                                    grid-template-columns: repeat(2, 1fr); /* 两列布局 */
+                                    gap: 10px;
+                                }
+                                .quad-grid img { height: 200px }
+                            }
+                            
+                            @media (max-width: 480px) {
+                                .quad-grid { grid-template-columns: 1fr } /* 单列布局 */
+                            }
+                            </style>
+                            
+                            <div class="quad-grid">
+                                <img src="../static/img/活动图片/activity/大师1.png" alt="图片描述">
+                                <img src="../static/img/活动图片/activity/大师2.png" alt="图片描述">
+                                <img src="../static/img/活动图片/activity/大师3.png" alt="图片描述">
+                                <img src="../static/img/活动图片/activity/大师4.png" alt="图片描述">
+                            </div>
+                    </div>
+                    <div class="desc-container">
+                        <h4>阶梯式课程体系</h4>
+                        <ul class="feature-list">
+                            <li>新手村：皮影操纵基础手势识别教学</li>
+                            <li>进阶营：名著剧本改编工作坊</li>
+                            <li>大师课：非遗传承人直播连线</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 图片模态框 -->
+        <div id="imageModal" class="image-modal">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="expandedImg">
+        </div>
+    </main>
+
+    <script>
+        // 图片放大功能
+        function showModal(element) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("expandedImg");
+            const imgSrc = element.querySelector('img').src;
+
+            modal.style.display = "flex";
+            modalImg.src = imgSrc;
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        // 点击模态框外关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById("imageModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <h4>快速链接</h4>
+                        <ul>
+                            <li><a href="#">合作机构</a></li>
+                            <li><a href="#">隐私政策</a></li>
+                            <li><a href="#">帮助中心</a></li>
+                        </ul>
+                    </div>
+                    <!-- 新增的联系我们部分 -->
+                    <div class="footer-contact">
+                        <h4>联系我们</h4>
+                        <address>
+                            <p><i class="fas fa-map-marker-alt"></i> 重庆市沙坪坝区壮志路33号</p>
+                            <p><i class="fas fa-phone"></i> 023-65385538</p>
+                        </address>
+                    </div>
+                    <div class="footer-social">
+                        <h4>社交媒体</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-bilibili"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-douyin"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-subscribe">
+                        <h4>订阅通知</h4>
+                        <form class="subscribe-form">
+                            <input type="email" placeholder="输入您的邮箱" class="subscribe-input">
+                            <button type="submit" class="subscribe-button">订阅</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 四境穿梭. 保留所有权利.</p>
+                </div>
+            </div>
+        </footer>
+        <script>
+            document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('nav').classList.toggle('active');
+            });
+        </script>
+        <!-- AI模拟入口 -->
+        <a href="../templates/deepseek.html" class="ai-entry"></a>
+        <script src="../static/js/activity.js"></script>
+    </body>
+    </html>

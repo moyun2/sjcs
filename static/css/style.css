@@ -38,6 +38,7 @@
     max-width: 1000px;
     margin: 0 auto 3rem;
     text-indent: 2em; /* 2em通常对应两个中文字符的宽度 */
+    margin-top: 160px; /* 增加顶部边距 */
 }
 
 .btn {
@@ -54,6 +55,24 @@
 
 .btn:hover {
     background-color: #a52a2a;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .btn {
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+    }
 }
 
 /* 四大名著网格 */

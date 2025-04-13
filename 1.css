@@ -1,0 +1,19 @@
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .image-container {
+        flex-wrap: wrap;       /* 小屏幕换行 */
+        gap: 10px;
+    }
+    .image-container img {
+        width: 48%;          /* 两列布局 */
+        flex: none;
+    }
+}
+
+/* 悬停效果 */
+.image-container img {
+    transition: transform 0.3s ease;
+}
+.image-container img:hover {
+    transform: scale(1.05);
+}
