@@ -24,10 +24,21 @@ header {
   margin: 0 auto;
 }
 
+/* 基础字体大小调整 */
+html {
+  font-size: 16px;
+}
+
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;/* 适配移动端 */
+}
+
+/* 适配移动端 */
+nav {
+  transition: all 0.3s ease;
 }
 
 .logo {
@@ -127,6 +138,51 @@ nav ul li a:hover {
   }
 }
 
+/* 添加汉堡菜单按钮 */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* 移动端样式 */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  nav {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+  }
+  
+  nav.active {
+    max-height: 500px;
+    padding: 1rem 0;
+  }
+  
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  nav ul li {
+    margin: 0.5rem 0;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+  }
+  
+  .logo img {
+    height: 40px;
+  }
+}
+
 /* 如果需要在小屏幕上调整logo大小 */
 @media (max-width: 768px) {
   .logo img {
@@ -137,6 +193,9 @@ nav ul li a:hover {
 /* 页脚样式 */
 .footer {
   background-color: #f0e6d2; /* 使用与图中类似的背景颜色 */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 2rem;
   color: #333;
   padding: 3rem 0 1rem;
 }
@@ -257,10 +316,21 @@ nav ul li a:hover {
   .hero {
       height: 400px;
   }
+
+  .hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
   
   .hero h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
   }
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+}
   
   .footer-content {
       grid-template-columns: 1fr;
@@ -277,5 +347,15 @@ nav ul li a:hover {
   
   .subscribe-button {
       border-radius: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+      grid-template-columns: 1fr;
+  }
+  
+  .footer-contact address p {
+      font-size: 0.9rem;
   }
 }
