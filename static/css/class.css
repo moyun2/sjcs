@@ -44,3 +44,38 @@
     margin-bottom: 1.2rem;
     font-size: 1rem;
 }
+
+
+@media (max-width: 480px) {
+    .classic-grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    
+    .classic-card {
+      margin: 0 auto;
+      max-width: 320px;
+    }
+  }
+  
+  .classic-img {
+    height: 180px;
+  }
+  
+  @media (max-width: 768px) {
+    .classic-img {
+      height: 150px;
+    }
+    
+    .classic-info {
+      padding: 1.2rem;
+    }
+    
+    .classic-title {
+      font-size: 1.5rem;
+    }
+    
+    .classic-desc {
+      font-size: 0.9rem;
+    }
+  }
